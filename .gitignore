@@ -13,3 +13,4 @@ coverage/
 docs/dist/
 # Squad: workstream activation file (local to this machine)
 .squad-workstream
+.squad/.first-run
