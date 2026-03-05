@@ -77,6 +77,8 @@ async function main(): Promise<void> {
     console.log(`             Flags: --dry-run, --clean, --yes, --accept-risks`);
     console.log(`  ${BOLD}workstreams${RESET} Manage Squad Workstreams (multi-Codespace scaling)`);
     console.log(`             Usage: workstreams <list|status|activate <name>>`);
+    console.log(`  ${BOLD}build${RESET}      Compile squad.config.ts into .squad/ markdown`);
+    console.log(`             Flags: --check (validate only), --dry-run (preview), --watch (rebuild on change)`);
 
     console.log(`  ${BOLD}help${RESET}       Show this help message`);
     console.log(`\nFlags:`);
@@ -235,6 +237,15 @@ async function main(): Promise<void> {
     console.log(`  ${DIM}Global squad:      ${globalExists ? globalSquadDir : 'not initialized'}${RESET}`);
     console.log();
 
+    return;
+  }
+
+  if (cmd === 'build') {
+    const { runBuild } = await import('./cli/commands/build.js');
+    const hasCheck = args.includes('--check');
+    const hasDryRun = args.includes('--dry-run');
+    const hasWatch = args.includes('--watch');
+    await runBuild(process.cwd(), { check: hasCheck, dryRun: hasDryRun, watch: hasWatch });
     return;
   }
 
