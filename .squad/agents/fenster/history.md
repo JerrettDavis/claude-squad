@@ -578,3 +578,41 @@ The CLI couldn't run because `packages/squad-sdk/src/index.ts` was missing re-ex
 - Updated team.md with @copilot git workflow instructions
 - Key: Skill file is the single source of truth — coordinator loads it and injects into spawn prompts
 - Decision: `release` branch dropped per Keaton's recommendation (YAGNI pre-1.0)
+
+---
+
+### 2026-03-05: Workflow Filter Implementation Review (PR williamhallatt/201)
+
+**Requested by:** williamhallatt (validation review of completed PR)
+
+**Context:** Branch `williamhallatt/201-investigate-actions-install` changed `packages/squad-sdk/src/config/init.ts` to filter workflow installation to only Squad-framework workflows (4 files) instead of copying all workflows from templates/.
+
+**Changes reviewed:**
+- Added `FRAMEWORK_WORKFLOWS` constant (4 filenames: squad-heartbeat.yml, squad-issue-assign.yml, squad-triage.yml, sync-squad-labels.yml)
+- Renamed `workflowFiles` → `allWorkflowFiles` in read step
+- Filtered with `allWorkflowFiles.filter(f => FRAMEWORK_WORKFLOWS.includes(f))`
+- Tests updated in `test/workflows.test.js` to validate framework workflows installed, CI/CD workflows excluded
+
+**Implementation assessment:**
+✅ Core logic sound — read all `.yml` → filter to framework → copy filtered list  
+✅ Variable rename clean and semantically correct throughout loop  
+✅ `Array.includes()` appropriate for 4-item array (no perf concern, matches existing patterns at lines 744, 768)  
+✅ Edge cases handled gracefully:
+  - Missing template files: silently skipped (no error, operates on disk-present files)
+  - `skipExisting: true` applies correctly (filter happens before copy loop)
+  - CLI layer has no bypass mechanism (filtering is SDK-internal, correct separation)
+✅ Constant placement discoverable (module-scope, well-commented, before `initSquad()`)  
+✅ No other callers to update (workflow logic self-contained in `includeWorkflows` block)  
+✅ Tests updated correctly (validates framework installed, CI/CD excluded)
+
+**Verdict:** APPROVED
+
+**Minor observation:** Missing template file handling is acceptable but could be improved — if a file in `FRAMEWORK_WORKFLOWS` doesn't exist in templates/, it's silently skipped with no warning. Not a blocker, but future enhancement could log warning.
+
+## Learnings
+
+- For small constant arrays (≤5 items), `Array.includes()` is idiomatic and performs equivalently to `Set.has()` — prefer readability over premature optimization
+- When filtering file lists before copy loops, operate on the disk-present files first (`readdirSync` → filter extensions → filter whitelist) — this makes missing template files self-healing (no error thrown)
+- Workflow installation in init.ts is self-contained in the `includeWorkflows` block — SDK layer controls filtering, CLI layer only gates the feature on/off
+
+📌 Team update (2026-03-05T10-35-50Z): PR #201 workflow filter approved by all reviewers — framework/scaffolding distinction, implementation pattern validated, test coverage noted — decided by Keaton, Fenster, Hockney, Edie

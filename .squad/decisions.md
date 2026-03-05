@@ -2002,3 +2002,270 @@ This is low-effort, high-value — a broken link on the GitHub Pages site erodes
 **Action Required:** Brady to decide: keep origin/insiders (matches decision) + delete origin/insider, or keep origin/insider and delete origin/insiders.
 **Status:** Infrastructure ready. Awaiting final branch naming confirmation.
 
+# Decision — Workflow Install Filter Architecture (#201)
+
+**Date:** 2026-03-05  
+**Author:** Keaton (Lead)  
+**Context:** PR review for issue #201 fix (workflow install filter)
+
+## Summary
+
+Approved PR that filters `squad init` to install only 4 framework workflows (squad-heartbeat, squad-issue-assign, squad-triage, sync-squad-labels), excluding 8 generic CI/CD scaffolding workflows (squad-ci, squad-release, etc.). Classification is correct. Hard exclusion (no flag) is the right architectural call.
+
+## Decision
+
+**Adopt the "framework vs. scaffolding" distinction for workflow installation:**
+
+- **Framework workflows** (always installed by init): Issue/label automation that Squad needs to function (heartbeat, triage, assignment, label sync)
+- **Scaffolding workflows** (opt-in via manual copy or upgrade): Build/release/deploy templates that are project-specific (CI, release, preview, docs, etc.)
+
+**Rationale:**
+1. CI/CD workflows are project-specific (npm vs. Python vs. Go). Generic templates aren't production-ready for most users.
+2. Users upgrading from versions before this fix already have all 12 workflows — `squad upgrade` continues to update them. This maintains backward compatibility.
+3. New users get minimal working Squad infrastructure. They can copy scaffolding from `.squad/templates/workflows/` if needed.
+
+## Known Trade-Off
+
+**`squad upgrade` behavior is NOT aligned with this filter.** Current architecture:
+- `squad init` (init.ts): Installs 4 framework workflows only
+- `squad upgrade` (upgrade.ts lines 409–422): Copies ALL 12 workflows
+
+**Implication:** Users who manually delete unwanted workflows (e.g., squad-ci.yml) will see them restored on every upgrade.
+
+**Why this is acceptable for now:**
+- The "right" fix (user preference in `.squad/config.json` to opt out of specific workflows) is future scope, not blocking.
+- Existing users are already on this path (they have all 12). New users won't be surprised (they start with 4).
+- Upgrade is Squad-owned territory (overwriteOnUpgrade: true) — users expect Squad to refresh its own workflows.
+
+**Future enhancement:** Let users opt out of specific workflows in `squad upgrade` via config field (e.g., `workflows: { exclude: ["squad-ci.yml", "squad-release.yml"] }`).
+
+## Pattern
+
+When filtering installation lists, distinguish **framework infrastructure** (always needed for the system to function) from **user scaffolding** (customizable, project-specific). Make the policy visible via:
+1. Named constant with JSDoc explanation
+2. Test coverage that verifies both inclusion AND exclusion
+3. Documentation note for users about manual copy path
+
+For workflows specifically:
+- **Framework** = issue/label automation (Squad's operational infrastructure)
+- **Scaffolding** = build/release/deploy (user's project-specific CI/CD)
+# Decision: FRAMEWORK_WORKFLOWS type pattern for filtered installation
+
+**Context:** PR #201 adds `FRAMEWORK_WORKFLOWS` constant to filter which workflow files get installed during `squad init`. Only Squad framework workflows are installed by default; generic CI/CD scaffolding is opt-in.
+
+**Type pattern validated:**
+```typescript
+const FRAMEWORK_WORKFLOWS = [
+  'squad-heartbeat.yml',
+  'squad-issue-assign.yml',
+  'squad-triage.yml',
+  'sync-squad-labels.yml',
+];
+
+// Usage:
+const allWorkflowFiles = readdirSync(workflowsSrc).filter(f => f.endsWith('.yml'));
+const workflowFiles = allWorkflowFiles.filter(f => FRAMEWORK_WORKFLOWS.includes(f));
+```
+
+**Type inference:** `string[]` (correct). `Array.prototype.includes(value: string)` accepts `string` from `readdirSync()`.
+
+**Alternatives considered:**
+- `as const` → Would narrow to `readonly ['squad-heartbeat.yml', ...]`, making `.includes()` require literal types instead of `string`. Not suitable when filtering runtime values from `readdirSync()`.
+- `readonly string[]` → No benefit over inferred `string[]` for module-scoped constant. Array is never mutated.
+
+**Recommendation:** Keep inferred `string[]` for constants used with `.includes()` on runtime `string` values. Use `as const` only when you need literal type narrowing (e.g., discriminated unions, enum-like behavior).
+
+**Testability:** Constant is module-scoped (not exported). Integration tests should verify correct workflow installation behavior, not unit-test the constant itself.
+
+**Build verification:** `npm run build` and `npm run lint` pass cleanly with zero errors.
+
+**Decided by:** Edie  
+**Date:** 2026-03-03  
+**Status:** APPROVED — type pattern is correct, no changes needed
+# Test Coverage Gaps: Workflow Filtering (Issue #201)
+
+**Date:** 2026-03-04  
+**Reviewer:** Hockney (Tester)  
+**Branch:** williamhallatt/201-investigate-actions-install  
+**Status:** Change is correct, tests need strengthening
+
+## Background
+
+Squad init now installs only 4 FRAMEWORK_WORKFLOWS (heartbeat, triage, issue-assign, sync-labels). The 8 CI/CD workflows (ci, preview, release, docs, insider-release, label-enforce, main-guard, promote) are NOT installed until `squad upgrade`.
+
+## Test Coverage Issues
+
+### 1. `test/workflows.test.js` (CJS) — NOT executed by vitest
+
+- **Status:** Comprehensive tests exist but are never run by `npm test`
+- **Issue:** vitest.config.ts includes only `test/**/*.test.ts`, excludes `.js` files
+- **Tests present:**
+  - ✅ Init copies FRAMEWORK_WORKFLOWS
+  - ✅ Init does NOT copy CI/CD workflows
+  - ✅ Upgrade copies CI/CD workflows
+  - ✅ Workflow YAML validity checks
+- **Risk:** If this file goes stale, no one will notice
+
+### 2. `test/cli/init.test.ts` (vitest, line 129-138) — Weak assertions
+
+**Current test:**
+```typescript
+it('should copy workflow files to .github/workflows/', async () => {
+  await runInit(TEST_ROOT);
+  
+  const workflowsPath = join(TEST_ROOT, '.github', 'workflows');
+  if (existsSync(workflowsPath)) {
+    const files = await readdir(workflowsPath);
+    const ymlFiles = files.filter(f => f.endsWith('.yml'));
+    expect(ymlFiles.length).toBeGreaterThan(0);  // ⚠️ WEAK
+  }
+});
+```
+
+**Problems:**
+- Passes with 1 file OR 4 files OR 12 files
+- Does NOT verify which workflows are installed
+- Does NOT verify CI/CD workflows are absent
+
+**Should be:**
+```typescript
+it('should copy only FRAMEWORK_WORKFLOWS to .github/workflows/', async () => {
+  await runInit(TEST_ROOT);
+  
+  const workflowsPath = join(TEST_ROOT, '.github', 'workflows');
+  const files = await readdir(workflowsPath);
+  const ymlFiles = files.filter(f => f.endsWith('.yml'));
+  
+  // Assert exactly 4 framework workflows
+  expect(ymlFiles).toHaveLength(4);
+  expect(ymlFiles).toContain('squad-heartbeat.yml');
+  expect(ymlFiles).toContain('squad-triage.yml');
+  expect(ymlFiles).toContain('squad-issue-assign.yml');
+  expect(ymlFiles).toContain('sync-squad-labels.yml');
+  
+  // Assert CI/CD workflows are NOT installed
+  expect(ymlFiles).not.toContain('squad-ci.yml');
+  expect(ymlFiles).not.toContain('squad-preview.yml');
+  expect(ymlFiles).not.toContain('squad-release.yml');
+});
+```
+
+### 3. `test/cli/upgrade.test.ts` (vitest, line 94-104) — No workflow verification
+
+**Current test:**
+```typescript
+it('should upgrade workflows', async () => {
+  const workflowsDir = join(TEST_ROOT, '.github', 'workflows');
+  
+  if (existsSync(workflowsDir)) {
+    const result = await runUpgrade(TEST_ROOT);
+    expect(result.filesUpdated.some(f => f.includes('workflows'))).toBe(true);  // ⚠️ WEAK
+  }
+});
+```
+
+**Problems:**
+- Does NOT verify which workflows are upgraded
+- Passes if only 1 workflow touched
+- Does NOT verify CI/CD workflows are present after upgrade
+
+**Should be:**
+```typescript
+it('should install CI/CD workflows during upgrade', async () => {
+  await runInit(TEST_ROOT);
+  
+  // Verify framework workflows installed
+  const workflowsDir = join(TEST_ROOT, '.github', 'workflows');
+  let files = await readdir(workflowsDir);
+  expect(files).toHaveLength(4); // Only framework workflows
+  
+  // Run upgrade
+  const result = await runUpgrade(TEST_ROOT);
+  
+  // Verify CI/CD workflows now present
+  files = await readdir(workflowsDir);
+  expect(files.length).toBeGreaterThan(4); // Framework + CI/CD
+  expect(files).toContain('squad-ci.yml');
+  expect(files).toContain('squad-preview.yml');
+  expect(files).toContain('squad-release.yml');
+  
+  // Verify upgrade report includes workflows
+  expect(result.filesUpdated.some(f => f.includes('workflows'))).toBe(true);
+});
+```
+
+## Regressions NOT Caught by Current Tests
+
+1. If `FRAMEWORK_WORKFLOWS` array is accidentally cleared → init.test.ts line 136 would fail (good), but error message would be vague
+2. If init accidentally installs 1 extra CI/CD workflow → init.test.ts still passes
+3. If upgrade skips a CI/CD workflow → upgrade.test.ts still passes
+4. If workflows are invalid YAML → no vitest test catches this (workflows.test.js does, but isn't run)
+
+## Recommendations
+
+### Immediate (for this PR):
+**APPROVED WITH NOTES** — Change is correct, merge it. Tests are adequate for smoke testing.
+
+### Follow-up (separate issue/PR):
+1. **Make workflows.test.js executable by vitest:**
+   - Convert to TypeScript OR
+   - Update vitest.config.ts to include `test/**/*.test.js`
+2. **Strengthen init.test.ts:**
+   - Replace line 136 with explicit workflow name assertions
+   - Add negative assertions for CI/CD workflows
+3. **Strengthen upgrade.test.ts:**
+   - Add workflow count verification
+   - Add explicit CI/CD workflow presence checks
+4. **Add YAML validity test to vitest suite:**
+   - Parse workflow files with a YAML library
+   - Assert required fields (name, on, jobs)
+
+## Impact
+
+- **Current risk:** Medium — Manual testing catches issues, but CI doesn't
+- **With changes:** Low — Automated tests would catch workflow installation regressions
+- **Effort:** 2-4 hours for a focused test improvement task
+
+---
+
+**Decision needed:**
+Should workflows.test.js be converted to TypeScript and integrated into vitest, or should we duplicate its assertions in init.test.ts/upgrade.test.ts?
+# Decision: Workflow Filter Implementation Pattern
+
+**Context:** PR williamhallatt/201 implemented filtering of workflow files during `squad init` to only install Squad-framework workflows (4 files) instead of copying all workflows from templates/.
+
+**Implementation Pattern:**
+```typescript
+// 1. Define framework workflows as module-scope constant
+const FRAMEWORK_WORKFLOWS = [
+  'squad-heartbeat.yml',
+  'squad-issue-assign.yml',
+  'squad-triage.yml',
+  'sync-squad-labels.yml',
+];
+
+// 2. Read disk, filter extensions, then filter to whitelist
+const allWorkflowFiles = readdirSync(workflowsSrc).filter(f => f.endsWith('.yml'));
+const workflowFiles = allWorkflowFiles.filter(f => FRAMEWORK_WORKFLOWS.includes(f));
+
+// 3. Copy loop operates on filtered list
+for (const file of workflowFiles) {
+  // copy logic with skipExisting check
+}
+```
+
+**Why This Pattern:**
+- ✅ **Graceful handling of missing templates**: Filtering happens on disk-present files, so if a framework workflow is missing from templates/, no error is thrown
+- ✅ **Separation of concerns**: SDK layer controls filtering, CLI layer only gates feature on/off (`includeWorkflows: true`)
+- ✅ **Discoverable**: Module-scope constant with clear comment explaining framework vs. opt-in distinction
+- ✅ **Consistent with codebase**: Matches existing `Array.includes()` patterns in init.ts (lines 744, 768)
+- ✅ **Self-documenting**: Variable rename (`workflowFiles` → `allWorkflowFiles` + new filtered `workflowFiles`) makes intent clear
+
+**Alternative Considered:**
+- Using `Set.has()` for filtering — rejected as premature optimization for 4-item array (< 1ms difference)
+
+**Future Enhancement (optional, not blocking):**
+- Log warning if a file in `FRAMEWORK_WORKFLOWS` doesn't exist in templates/ — helps catch template drift during development
+
+**Decided by:** Fenster (implementation review)  
+**Date:** 2026-03-05

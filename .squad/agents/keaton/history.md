@@ -702,3 +702,31 @@ This history accurately documents Keaton's work and decisions. Future spawns can
 
 
 📌 Team update (2026-03-04T17:52:00Z): Migration docs file-safety guidance added — doctor command now live in CLI (fixes #188) — decided by Keaton, implemented by McManus
+
+### 2026-03-05T20:50:00Z: Issue #201 Fix Review — Workflow Install Filter Architecture
+
+- **Task:** Architectural review of PR fixing issue #201 (`squad init` was copying ALL 12 workflows including Squad's own CI/CD pipeline). PR introduces `FRAMEWORK_WORKFLOWS` constant to filter init to 4 framework workflows only. Two files changed: init.ts (filter logic), workflows.test.js (test expectations).
+- **Context:** William Hallatt implemented fix on branch `williamhallatt/201-investigate-actions-install`. Tests pass. Issue reported that users were getting squad-ci.yml, squad-release.yml, squad-preview.yml, etc. — workflows meant for Squad's own repository, not user repos. Fix distinguishes "framework workflows" (always installed) from "CI/CD scaffolding" (opt-in via upgrade).
+- **Review Findings:**
+  1. **✅ FRAMEWORK_WORKFLOWS classification is correct.** Four files in the constant:
+     - `squad-heartbeat.yml` (Ralph's automated status updates)
+     - `squad-issue-assign.yml` (automatic issue assignment to squad members)
+     - `squad-triage.yml` (triage workflow on `squad` label)
+     - `sync-squad-labels.yml` (label sync from team.md)
+     All four are Squad framework infrastructure, not user CI/CD. Verified by inspecting workflow triggers: they operate on issues/labels, not PR builds or releases.
+  2. **✅ Exclusion list is correct.** Eight workflows excluded:
+     - `squad-ci.yml`, `squad-release.yml`, `squad-preview.yml`, `squad-insider-release.yml`, `squad-docs.yml` (all build/deploy workflows)
+     - `squad-main-guard.yml`, `squad-promote.yml`, `squad-label-enforce.yml` (governance workflows)
+     Classification verified against templates.ts TEMPLATE_MANIFEST lines 176–245. All workflows have `overwriteOnUpgrade: true` (meaning upgrade.ts will copy them), so the gap isn't an exclusion error — it's by design.
+  3. **✅ Hard exclusion is the right architectural call.** No flag, no opt-in needed for init. Reasoning: CI/CD workflows are project-specific (npm vs. Python vs. Go vs. .NET). Templates exist as generic scaffolding, not production-ready defaults. Users can manually copy from `.squad/templates/workflows/` if desired. upgrade.ts already copies ALL workflows (lines 409–422), so existing users get updates. Init should be minimal; upgrade should be comprehensive. This is a clean separation of concerns.
+  4. **⚠️ The upgrade gap is MEANINGFUL and should be documented.** Current architecture:
+     - `squad init` (init.ts:817): Filters to 4 framework workflows only.
+     - `squad upgrade` (upgrade.ts:409–422): Copies ALL 12 workflows (no filter).
+     This means: (A) New users get 4 workflows. (B) Existing users who ran init before this fix already have all 12 workflows, and `squad upgrade` will keep updating them. (C) Users who manually delete unwanted workflows will see them restored on every upgrade.
+     **Impact:** Users who want to remove squad-ci.yml must manually delete it after EVERY upgrade. This is a paper cut but not a blocker. The "right" architectural fix would be: upgrade.ts reads a user preference file (e.g., `.squad/config.json` field `workflows: ["squad-heartbeat", "squad-issue-assign"]`) and only updates opted-in workflows. But that's future scope, not this PR's responsibility.
+  5. **✅ Constant placement is appropriate.** Defined at module scope (line 446), immediately before initSquad() (line 453), after stampVersionInContent() (line 438). Follows existing pattern (other module-level constants defined near function signatures). JSDoc explains classification clearly. No issues.
+  6. **✅ PR is ready to submit.** Tests updated correctly (test/workflows.test.js lines 18–26, 122–133). New test block verifies CI/CD workflows are NOT installed (lines 136–147). YAML validity tests updated to check framework workflows only (line 198). All changes are minimal, surgical, correct.
+- **Recommended PR note:** Suggest adding one sentence to PR description: "Note: `squad upgrade` will continue to copy all workflows (including CI/CD templates) for existing users. Future enhancement: let users opt out of specific workflows in upgrade via config file."
+- **Verdict:** **✅ APPROVED.** Classification correct, architecture sound, tests comprehensive. Hard exclusion is the right call for init. Upgrade gap is known and acceptable for this iteration. PR is production-ready.
+- **Pattern learned:** When filtering lists in initialization, distinguish "framework infrastructure" (always needed) from "user scaffolding" (opt-in/customizable). Clear constant naming + JSDoc makes the policy visible to future maintainers. For workflows specifically: framework = issue/label automation, scaffolding = build/release/deploy.
+📌 Team update (2026-03-05T10-35-50Z): PR #201 workflow filter approved by all reviewers — framework/scaffolding distinction, implementation pattern validated, test coverage noted — decided by Keaton, Fenster, Hockney, Edie
