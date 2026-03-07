@@ -1053,3 +1053,29 @@ Restricts workflow installation in \`squad init\` to only Squad-framework workfl
 - Version bumps not part of feature PR — revert if accidental, changesets handle release versioning
 - PR target can be Brady's integration branch (bradygaster/dev) not just main/dev/insiders — confirms Brady's workflow practice
 - Co-authored-by trailer only required when Copilot actually authors commits (not for human contributors)
+
+### Fork Contribution Procedure
+
+Always create feature branches from `upstream/dev`, not `upstream/main`:
+```bash
+git fetch upstream
+git checkout -b username/issue-slug upstream/dev
+```
+
+Always run `npx changeset add` (or create `.changeset/*.md` manually) before the first push.
+
+PR command for fork contributions — always specify base and head explicitly:
+```bash
+gh pr create --base dev --repo bradygaster/squad --head username:branch-name
+```
+
+If a branch was accidentally created from the wrong ancestor, rebase it onto `upstream/dev`:
+```bash
+git rebase --onto upstream/dev {wrong-ancestor-commit} HEAD
+git push origin branch-name --force-with-lease
+```
+
+To fix a PR already opened against the wrong base:
+```bash
+gh pr edit {pr-number} --base dev
+```

@@ -698,3 +698,32 @@ px tsx), it logs a test-mode warning but still validates config — useful for d
 
 📌 Team update (2026-03-06): Fixed Azure Function sample — added missing `main` field to package.json, updated `start` script to build-then-run, added build documentation to README. Root cause was runtime couldn't discover function registration without `main` pointing to compiled output. — decided by Fenster
 
+📌 Team update (2026-03-06): Fixed Azure Function sample — added missing `main` field to package.json, updated `start` script to build-then-run, added build documentation to README. Root cause was runtime couldn't discover function registration without `main` pointing to compiled output. — decided by Fenster
+
+## Issue #228 — Squad Guard vs Scribe Runtime State
+
+**Problem:** Scribe's commit step (`git add .squad/`) stages runtime state files (orchestration-log/, log/, decisions/inbox/, sessions/) on feature branches. When PRs target main, the squad-main-guard workflow catches them — causing CI failures that users didn't cause.
+
+**Fix (defense in depth):**
+1. Updated Scribe commit instruction in both `squad.agent.md` files to `git reset HEAD` on forbidden paths after `git add .squad/`
+2. Added `.squad/decisions/inbox/` and `.squad/sessions/` to `.gitignore` entries in `init.ts` (orchestration-log/ and log/ were already covered)
+3. Updated init test to verify all four runtime state paths
+
+## Learnings
+
+- The squad-main-guard blocks ALL `.squad/` paths from protected branches — this is correct. Runtime state must be prevented at the commit stage, not the guard stage.
+- `.gitignore` is first-line defense (prevents staging new files) but doesn't help for already-tracked files. The `git reset HEAD` in the Scribe instruction is the belt-and-suspenders fix.
+- Four runtime state paths to always exclude: `orchestration-log/`, `log/`, `decisions/inbox/`, `sessions/`
+### 2026-03-06: Fix version stamp overwrite during upgrade (#195)
+**Requested by:** Brady (via issue #195, reported by @dnoriegagoodwin)
+**PR:** #212
+
+Root cause: `TEMPLATE_MANIFEST` loop in `upgrade.ts` includes `squad.agent.md` with `overwriteOnUpgrade: true`. The loop runs *after* `stampVersion()` writes the correct version, overwriting the stamped file with the raw template (`0.0.0-source`). Result: version never persists, `isAlreadyCurrent` never passes, all 30+ files re-copied on every upgrade.
+
+**Fix (1 line):** Added `&& f.source !== 'squad.agent.md'` to the manifest filter. `squad.agent.md` is already handled explicitly with copy + `stampVersion()` earlier in the function.
+
+**Test added:** Regression test verifying stamp survives the manifest loop and second upgrade reports "already current".
+
+## Learnings
+- When a file needs post-copy transformation (like `stampVersion`), it must be excluded from bulk-copy loops that would overwrite the transformation. Any manifest with `overwriteOnUpgrade: true` that includes a file handled by explicit copy+transform is a race condition.
+- The beta `index.js` doesn't use `TEMPLATE_MANIFEST` — it copies files individually with inline `stampVersion()` calls, so this bug only exists in the TypeScript CLI path.
