@@ -775,3 +775,16 @@ Fixed 4 bugs in a single branch:
 - The assertModelPreference() validator pattern (accept string or object, normalize internally) is reusable for any field that needs a simple-or-rich config shape.
 - Charter-compiler now extracts modelRationale and modelFallback in addition to modelPreference.
 - PR #245, branch squad/223-model-config.
+
+### Installation Resilience — Issue #247 (2026-03-07)
+
+- Created runtime/otel-api.ts: resilient wrapper that loads @opentelemetry/api via createRequire() with full no-op fallbacks (Span, Tracer, Meter, SpanStatusCode, diag). Zero-crash guarantee when the package is absent.
+- Refactored runtime/otel.ts: moved @opentelemetry/sdk-node and exporter imports from top-level to lazy-load inside ensureSDK(). Optional packages that crash at import time if not installed must always be lazy-loaded.
+- Pattern: for optional dependencies in ESM packages, use createRequire(import.meta.url) for synchronous lazy loading inside functions, not top-level import statements.
+- vscode-jsonrpc ESM issue: the package has no exports map, so subpath import 'vscode-jsonrpc/node' fails under strict ESM resolution in Node 24+/25+. This is upstream in @github/copilot-sdk. Adding vscode-jsonrpc as a direct dep improves hoisting but doesn't fix the import path.
+- The "*" version specifier in squad-cli -> squad-sdk dep can cause transitive dependency resolution issues in npx temp installs. Making deps optional with runtime fallbacks is more robust than relying on proper hoisting.
+
+## Learnings
+- Any dependency that is functionally optional (telemetry, observability) must be loaded lazily with try/catch, even if listed in dependencies. Users installing via npx have unpredictable dependency trees.
+- The createRequire() pattern for lazy sync loading is already established in otel.ts (for package.json resolution). Reuse it for all optional deps.
+- When 9+ files import from the same optional package, a centralized wrapper module (otel-api.ts) is the right pattern. Single point of fallback logic, consumers don't need to know about optionality.
