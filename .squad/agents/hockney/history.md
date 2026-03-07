@@ -1,3 +1,5 @@
+
+📌 Team update (2026-03-07T16-19-00Z): v0.8.21 PRs reviewed. #189 (workstreams) and #191 (ADO) held for v0.8.22 — rebase to dev. Both have merge conflicts, no CI, insufficient test coverage. Keaton: v0.8.21 clears for release pending #248. McManus: docs ship-ready. Brady: Actions-to-CLI shift, #249/#250/#251 locked. — decided by Hockney
 📌 Team update (2026-03-07T05:56:56Z): Led test suite health assessment. Safe to ship v0.8.21 (3,655 passing). Critical gaps: 8 CLI commands untested, 30+ error-handling tests missing. Recommend 12-14 hrs QA before v0.8.22 feature work. Flaky speed gate (3s threshold, 50% pass rate) should relax to 5s or optimize init path. Adopted CLI wiring regression test pattern from PR #238 permanently. — decided by Hockney
 # Project Context
 
@@ -93,4 +95,5 @@
 
 
 📌 Team update (2026-03-07T15-55-00Z): Code review of v0.8.21 approved (3,737 tests passing, 0 failures). otel-api wrapper verified, speed gate tests hardened. Formal decision on optional OTel dependency created. Ready to ship v0.8.21. — decided by Hockney
+
 

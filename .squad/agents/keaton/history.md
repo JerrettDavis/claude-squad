@@ -1,3 +1,5 @@
+
+📌 Team update (2026-03-07T16-19-00Z): Pre-release triage complete. v0.8.21 releases cleanly pending #248 fix. v0.8.22 roadmap well-scoped (9 issues, 3 streams). Close #194 (completed) and #231 (duplicate). Brady directive: #249, #250, #251 locked for v0.8.22. Actions-to-CLI directive received (move 5 squad workflows to CLI). — decided by Keaton
 📌 Team update (2026-03-07T05:56:56Z): Led full issue triage (22 open issues). P0/P1/P2/P3 prioritization complete. v0.8.22 target = 11 issues (5 fix-now + 6 next-wave); 11 deferred to v0.8.23+. Key decisions: CLI audit batch (#237/#236), model config priority (#223 > #205), migration wave grouping (#197/#231/#126), hub repo feature (#242). — decided by Keaton
 # Project Context
 
@@ -68,4 +70,5 @@
 **Team Status:** External contributors now viable for parallel work. Merge conflicts due to base drift, not code — low friction, normal pattern. Fork-first procedure repeatable.
 
 📌 Team update (2026-03-07T15-55-00Z): v0.8.21 approved for release (Hockney: test validation passed; McManus: blog published). SDK-First init/migrate features remain deferred to v0.8.22 per previous decision. — coordinated by Scribe
+
 

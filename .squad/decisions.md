@@ -3960,3 +3960,53 @@ Create TWO complementary blog posts with clear ownership:
 - #250: standalone squad migrate command (subsumes #231)
 - #251: comprehensive SDK-First mode documentation
 
+
+### 2026-03-07T08-14-43Z: User directive
+**By:** Brady (via Copilot)
+**What:** Issues #249, #250, and #251 (SDK-First init --sdk flag, standalone migrate command, comprehensive SDK-First docs) are committed to v0.8.22 - not backlog, not optional.
+**Why:** User request - captured for team memory
+
+
+### 2026-03-07T16-19-00Z: Pre-release triage — v0.8.21 release ready pending #248 fix
+**By:** Keaton (Lead)
+**What:** Analyzed all 23 open issues. Result: v0.8.21 releases cleanly pending fix for #248 (triage team dispatch). v0.8.22 roadmap is well-scoped (9 issues, 3 parallel streams). Close #194 (completed) and #231 (duplicate).
+**Why:** Final release gate. Coordinator override: #248 deferred to v0.8.22 (standalone CLI feature, not core to interactive experience). Keeps release unblocked.
+**Details:** 2 closeable, 1 P0 override, 9 for v0.8.22, 5 for v0.8.23+, 1 for v0.9+, 4 backlog. See .squad/orchestration-log/2026-03-07T16-19-00Z-keaton.md for full triage table.
+
+### 2026-03-07T16-19-00Z: PR hold decision — #189 (workstreams) and #191 (ADO) rebase to dev for v0.8.22
+**By:** Hockney (Tester)
+**What:** Both PRs are held for v0.8.22 and must rebase from main to dev. Neither ships for v0.8.21.
+**Why:** PR #189: merge conflicts, no CI, process.exit() violation, missing CLI tests, 6 unresolved review threads. PR #191: merge conflicts, no CI, untested security fixes, incomplete Planner adapter. Both have solid architecture but insufficient readiness for v0.8.21.
+**Details:** See .squad/orchestration-log/2026-03-07T16-19-00Z-hockney.md for detailed code assessment.
+
+### 2026-03-07T16-19-00Z: Docs ready for v0.8.21 — no release blockers
+**By:** McManus (DevRel)
+**What:** v0.8.21 documentation is ship-ready. SDK-First mode guide (705 lines), What's New blog, CHANGELOG, and contributors section all complete. No blocking gaps.
+**Why:** Release readiness gate. Docs are complete for Phase 1. Minor gaps are non-blocking and addressed in v0.8.22 roadmap.
+**Details:** 2 docs issues queued for v0.8.22 (#251 restructure, #210 contributors workflow). See .squad/orchestration-log/2026-03-07T16-19-00Z-mcmanus.md for full triage.
+
+### 2026-03-07T16:20: User directive — Shift from Actions to CLI
+**By:** Brady (via Copilot)
+**What:** "I'm seriously concerned about our continued abuse of actions and think the more we can stop relying on actions to do things and start relying on the cli to do things, it puts more emphasis and control in the user's hand and less automation with actions. I think we're maybe going to surprise customers with some of the usage in actions and I would really hate for that to be a deterrent from using squad."
+**Why:** User directive — strategic direction for the product. Actions usage can surprise customers with unexpected billing and loss of control. CLI-first puts the user in the driver's seat.
+
+### Current Actions Inventory (15 workflows)
+
+**Squad-specific (customer concern):**
+1. `sync-squad-labels.yml` — Auto-syncs labels from team.md on push
+2. `squad-triage.yml` — Auto-triages issues when labeled "squad"
+3. `squad-issue-assign.yml` — Auto-assigns issues when squad:{member} labeled
+4. `squad-heartbeat.yml` — Ralph heartbeat/auto-triage (cron currently disabled)
+5. `squad-label-enforce.yml` — Label mutual exclusivity on label events
+
+**Standard CI/Release (expected):**
+6. `squad-ci.yml` — Standard PR/push CI
+7. `squad-release.yml` — Tag + release on push to main
+8. `squad-promote.yml` — Branch promotion (workflow_dispatch)
+9. `squad-main-guard.yml` — Forbidden file guard
+10. `squad-preview.yml` — Preview validation
+11. `squad-docs.yml` — Docs build/deploy
+12-15. Publish/insider workflows
+
+**Directive:** Move squad-specific automation (1-5) into CLI commands. Keep standard CI/release workflows.
+

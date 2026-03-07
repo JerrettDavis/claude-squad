@@ -1,3 +1,5 @@
+
+📌 Team update (2026-03-07T16-19-00Z): Docs triage complete — v0.8.21 ready (SDK-First guide 705 lines, blog, changelog, contributors). #251/#210 queued for v0.8.22. Keaton: v0.8.21 releases pending #248 fix. Hockney: PRs #189/#191 held for v0.8.22. Brady: #249/#250/#251 locked, Actions-to-CLI shift. — decided by McManus
 # Project Context
 
 - **Owner:** Brady
@@ -1292,4 +1294,5 @@ Multi-agent build of Rock-Paper-Scissors game with 10 AI strategies, Docker infr
 📌 Team update (2026-03-05T22-10-00Z): SDK-First Mode documentation published (3-tier strategy). Documented all 8 builders, CLI flags, config discovery. Tone ceiling maintained. — decided by McManus
 
 📌 Team update (2026-03-07T15-55-00Z): v0.8.21 blog strategy finalized: two-post approach (SDK-First deep dive + comprehensive release wave). Blog post 025 published (336 lines), CHANGELOG updated with [0.8.21] section. Decision on blog scope and audience segmentation created. Ready for release communication. — decided by McManus
+
 
