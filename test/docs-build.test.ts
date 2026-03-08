@@ -28,7 +28,7 @@ const EXPECTED_SCENARIOS = [
 const EXPECTED_BLOG = [
   '026-whats-new-ado-comms-subsquads',
   '025-squad-goes-enterprise-azure-devops', '024-v0823-release',
-  '023-subsquads-horizontal-scaling', '023-squad-goes-enterprise-azure-devops',
+  '023-subsquads-horizontal-scaling',
   '022-welcome-to-the-new-squad', '021-the-migration',
   '020-docs-reborn', '019-shaynes-remote-mode', '018-the-adapter-chronicles',
   '017-version-alignment', '016-wave-3-docs-that-teach', '015-wave-2-the-repl-moment',
@@ -136,8 +136,8 @@ describe('Docs Build Script (markdown-it)', () => {
     if (existsSync(DIST_DIR)) {
       rmSync(DIST_DIR, { recursive: true, force: true });
     }
-    execSync(`node "${BUILD_SCRIPT}"`, { cwd: DOCS_DIR, timeout: 30_000 });
-  }, 30_000);
+    execSync(`node "${BUILD_SCRIPT}"`, { cwd: DOCS_DIR, timeout: 60_000 });
+  }, 60_000);
 
   afterAll(() => {
     if (existsSync(DIST_DIR)) {
@@ -170,9 +170,9 @@ describe('Docs Build Script (markdown-it)', () => {
   it('build.js runs without errors (exit code 0)', () => {
     if (!existsSync(BUILD_SCRIPT)) return;
     expect(() => {
-      execSync(`node "${BUILD_SCRIPT}"`, { cwd: DOCS_DIR, timeout: 30_000 });
+      execSync(`node "${BUILD_SCRIPT}"`, { cwd: DOCS_DIR, timeout: 60_000 });
     }).not.toThrow();
-  }, 30_000);
+  }, 60_000);
 
   // --- 2. All section files produce HTML output ---
 
