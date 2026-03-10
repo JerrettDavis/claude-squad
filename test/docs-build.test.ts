@@ -22,7 +22,7 @@ const EXPECTED_GUIDES = ['tips-and-tricks', 'sample-prompts', 'personal-squad'];
 const EXPECTED_REFERENCE = ['cli', 'sdk', 'config'];
 
 const EXPECTED_SCENARIOS = [
-  'issue-driven-dev', 'existing-repo', 'ci-cd-integration', 'solo-dev', 'monorepo', 'team-of-humans',
+  'issue-driven-dev', 'existing-repo', 'ci-cd-integration', 'solo-dev', 'monorepo', 'team-of-humans', 'ralph-operations', 'proactive-communication',
 ];
 
 const EXPECTED_BLOG = [
@@ -54,7 +54,7 @@ function getMarkdownFiles(dirName: string = 'guide'): string[] {
 }
 
 function getAllMarkdownFiles(): string[] {
-  const sections = ['get-started', 'guide', 'reference', 'scenarios', 'blog'];
+  const sections = ['get-started', 'guide', 'reference', 'scenarios', 'features', 'concepts'];
   const allFiles: string[] = [];
   for (const section of sections) {
     allFiles.push(...getMarkdownFiles(section));
