@@ -37,9 +37,7 @@ squad init
 
 **✓ Validate:** Check that `.squad/team.md` was created in your project.
 
-**Or use npx (no install):** `npx @bradygaster/squad-cli` — see [Migration Guide](docs/get-started/migration.md) if upgrading from an older version.
-
-### 3. Authenticate with GitHub (for Issues, PRs, and Ralph)
+### 3. Authenticate with GitHub(for Issues, PRs, and Ralph)
 
 ```bash
 gh auth login
@@ -113,8 +111,6 @@ For insider builds:
 ```bash
 npm install -g @bradygaster/squad-cli@insider
 ```
-
-> **Note:** GitHub-native distribution (`npx github:bradygaster/squad`) has been removed. All distribution is now via npm (see [Migration Guide](docs/get-started/migration.md) for details).
 
 ---
 
@@ -237,7 +233,7 @@ Squad uses [changesets](https://github.com/changesets/changesets) for independen
 
 ```bash
 # Add a changeset
-npx changeset add
+squad changeset add
 
 # Validate changesets
 npm run changeset:check
@@ -633,7 +629,7 @@ npm run lint           # Type check (tsc --noEmit)
 - **GitHub Copilot CLI & VS Code** — Squad works on both CLI and VS Code
 - **`gh` CLI required** — GitHub Issues, PRs, Ralph, and Project Boards all need `gh auth login`
 - **Knowledge grows with use** — the first session is the least capable; agents improve as they accumulate history
-- **npm distribution only** — Install via `npm install -g @bradygaster/squad-cli` or `npx @bradygaster/squad-cli`. GitHub-native distribution (`npx github:`) is no longer supported.
+- **npm distribution only** — Install via `npm install -g @bradygaster/squad-cli`.
 
 ---
 
