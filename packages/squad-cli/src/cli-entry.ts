@@ -234,6 +234,8 @@ async function main(): Promise<void> {
     console.log(`                    upstream sync [name]`);
     console.log(`  ${BOLD}economy${RESET}    Toggle economy mode (cost-conscious model selection)`);
     console.log(`             Usage: economy [on|off]`);
+    console.log(`  ${BOLD}orchestrate${RESET} Submit work to self-hosted orchestrator (AgentHub)`);
+    console.log(`             Usage: orchestrate --prompt "..." [--url <agenthub-url>] [--wait]`);
 
     console.log(`  ${BOLD}version${RESET}    Print installed version`);
     console.log(`  ${BOLD}help${RESET}       Show this help message`);
@@ -638,6 +640,12 @@ async function main(): Promise<void> {
   if (cmd === 'economy') {
     const { runEconomy } = await import('./cli/commands/economy.js');
     await runEconomy(process.cwd(), args.slice(1));
+    return;
+  }
+
+  if (cmd === 'orchestrate') {
+    const { runOrchestrate } = await import('./cli/commands/orchestrate.js');
+    await runOrchestrate(args.slice(1));
     return;
   }
 
