@@ -14,11 +14,11 @@ import { detectSquadDir } from '../core/detect-squad-dir.js';
 import { success, warn, info, secondary, BOLD, RESET, GREEN, YELLOW, RED, GRAY, DIM } from '../core/output.js';
 import { fatal } from '../core/errors.js';
 
-import type { ScheduleManifest, ScheduleState, ScheduleEntry, ScheduleProvider } from '@bradygaster/squad-sdk/runtime/scheduler';
+import type { ScheduleManifest, ScheduleState, ScheduleEntry, ScheduleProvider } from '@jerrettdavis/squad-sdk/runtime/scheduler';
 
 // Re-export so tests can mock through this module
 async function loadSchedulerModule() {
-  return import('@bradygaster/squad-sdk/runtime/scheduler');
+  return import('@jerrettdavis/squad-sdk/runtime/scheduler');
 }
 
 function resolveSchedulePath(cwd: string): string {
@@ -241,3 +241,4 @@ function formatTrigger(entry: ScheduleEntry): string {
       return 'unknown trigger';
   }
 }
+

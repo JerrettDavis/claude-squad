@@ -12,8 +12,8 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
-import { resolveGlobalSquadPath, resolvePersonalSquadDir, ensurePersonalSquadDir } from '@bradygaster/squad-sdk/resolution';
-import { resolvePersonalAgents } from '@bradygaster/squad-sdk/agents/personal';
+import { resolveGlobalSquadPath, resolvePersonalSquadDir, ensurePersonalSquadDir } from '@jerrettdavis/squad-sdk/resolution';
+import { resolvePersonalAgents } from '@jerrettdavis/squad-sdk/agents/personal';
 import { success, warn, info, BOLD, RESET, DIM } from '../core/output.js';
 import { fatal } from '../core/errors.js';
 
@@ -244,3 +244,4 @@ Ghost protocol is enforced in project contexts (observe, suggest, never modify).
 preferences, and a style that's distinctly yours.]
 `;
 }
+

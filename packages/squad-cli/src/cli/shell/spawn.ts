@@ -4,9 +4,9 @@
  * Creates SDK sessions via SquadClient, sends the task, and streams the response.
  */
 
-import { resolveSquad } from '@bradygaster/squad-sdk/resolution';
-import { SquadClient } from '@bradygaster/squad-sdk/client';
-import type { SquadSession } from '@bradygaster/squad-sdk/client';
+import { resolveSquad } from '@jerrettdavis/squad-sdk/resolution';
+import { SquadClient } from '@jerrettdavis/squad-sdk/client';
+import type { SquadSession } from '@jerrettdavis/squad-sdk/client';
 import { SessionRegistry } from './sessions.js';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -147,3 +147,4 @@ export async function spawnAgent(
     };
   }
 }
+

@@ -8,8 +8,8 @@
  * @module cli/copilot-install
  */
 
-import { initSquad } from '@bradygaster/squad-sdk/config';
-import type { InitOptions, InitResult } from '@bradygaster/squad-sdk/config';
+import { initSquad } from '@jerrettdavis/squad-sdk/config';
+import type { InitOptions, InitResult } from '@jerrettdavis/squad-sdk/config';
 
 // ============================================================================
 // Types
@@ -180,3 +180,4 @@ export async function installFromCopilot(
     instructions,
   };
 }
+

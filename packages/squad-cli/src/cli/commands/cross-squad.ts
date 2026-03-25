@@ -19,7 +19,7 @@ import {
   findSquadByName,
   buildDelegationArgs,
   type DiscoveredSquad,
-} from '@bradygaster/squad-sdk';
+} from '@jerrettdavis/squad-sdk';
 
 const execFileAsync = promisify(execFile);
 
@@ -98,3 +98,4 @@ function buildDelegationBody(description: string, target: DiscoveredSquad): stri
     `${DIM}Created by squad cross-squad orchestration${RESET}`,
   ].join('\n');
 }
+

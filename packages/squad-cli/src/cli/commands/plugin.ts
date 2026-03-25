@@ -8,7 +8,7 @@ import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
-import { TIMEOUTS } from '@bradygaster/squad-sdk';
+import { TIMEOUTS } from '@jerrettdavis/squad-sdk';
 import { success, warn, info, dim, bold, DIM, BOLD, RESET } from '../core/output.js';
 import { fatal } from '../core/errors.js';
 import { detectSquadDir } from '../core/detect-squad-dir.js';
@@ -175,3 +175,4 @@ export async function runPlugin(dest: string, args: string[]): Promise<void> {
 
   fatal(`Unknown action: ${action}. Usage: squad plugin marketplace add|remove|list|browse`);
 }
+

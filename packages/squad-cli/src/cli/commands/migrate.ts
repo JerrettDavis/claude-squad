@@ -13,7 +13,7 @@ import type {
   TeamDefinition,
   RoutingDefinition,
   CastingDefinition,
-} from '@bradygaster/squad-sdk';
+} from '@jerrettdavis/squad-sdk';
 
 export interface MigrateOptions {
   to?: 'sdk' | 'markdown';
@@ -288,7 +288,7 @@ function generateSquadConfig(
   if (casting) {
     lines.push("  defineCasting,");
   }
-  lines.push("} from '@bradygaster/squad-sdk';");
+  lines.push("} from '@jerrettdavis/squad-sdk';");
   lines.push("");
   lines.push("/**");
   lines.push(" * Squad Configuration");
@@ -521,3 +521,4 @@ export async function runMigrate(cwd: string, options: MigrateOptions): Promise<
   
   console.log();
 }
+

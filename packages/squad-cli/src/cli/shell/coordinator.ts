@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { listRoles, searchRoles } from '@bradygaster/squad-sdk';
+import { listRoles, searchRoles } from '@jerrettdavis/squad-sdk';
 
 import type { ShellMessage } from './types.js';
 
@@ -363,3 +363,4 @@ export function formatConversationContext(
     })
     .join('\n');
 }
+

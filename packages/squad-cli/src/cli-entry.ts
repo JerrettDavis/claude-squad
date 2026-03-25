@@ -100,7 +100,7 @@ import { getPackageVersion } from './cli/core/version.js';
 
 // Lazy-load squad-sdk to avoid triggering @github/copilot-sdk import on Node 24+
 // (Issue: copilot-sdk has broken ESM imports - vscode-jsonrpc/node without .js extension)
-const lazySquadSdk = () => import('@bradygaster/squad-sdk');
+const lazySquadSdk = () => import('@jerrettdavis/squad-sdk');
 const lazyRunShell = () => import('./cli/shell/index.js');
 
 // Use local version resolver instead of importing VERSION from squad-sdk
@@ -232,9 +232,9 @@ async function main(): Promise<void> {
     console.log(`  ${BOLD}--economy${RESET}      Activate economy mode for this session (cheaper models)`);
     console.log(`  ${BOLD}--team-root${RESET}    Override team root path for resolution`);
     console.log(`\nInstallation:`);
-    console.log(`  npm install --save-dev @bradygaster/squad-cli`);
+    console.log(`  npm install --save-dev @jerrettdavis/squad-cli`);
     console.log(`\nInsider channel:`);
-    console.log(`  npm install --save-dev @bradygaster/squad-cli@insider\n`);
+    console.log(`  npm install --save-dev @jerrettdavis/squad-cli@insider\n`);
     return;
   }
 
@@ -639,6 +639,7 @@ main().catch(err => {
   }
   process.exit(1);
 });
+
 
 
 

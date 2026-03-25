@@ -29,8 +29,8 @@ import type {
   CeremonyDefinition,
   ModelPreference,
   BuilderModelId,
-} from '@bradygaster/squad-sdk';
-import type { SkillDefinition as BuilderSkillDefinition } from '@bradygaster/squad-sdk/builders';
+} from '@jerrettdavis/squad-sdk';
+import type { SkillDefinition as BuilderSkillDefinition } from '@jerrettdavis/squad-sdk/builders';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -572,3 +572,4 @@ function formatStatus(status?: string): string {
       return '✅ Active';
   }
 }
+

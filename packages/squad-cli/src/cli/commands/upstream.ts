@@ -26,7 +26,7 @@ function isValidGitRef(ref: string): boolean {
 function isValidUpstreamName(name: string): boolean {
   return /^[a-zA-Z0-9._-]+$/.test(name);
 }
-import type { UpstreamConfig, UpstreamSource } from '@bradygaster/squad-sdk';
+import type { UpstreamConfig, UpstreamSource } from '@jerrettdavis/squad-sdk';
 
 function readUpstreams(upstreamFile: string): UpstreamConfig {
   if (!fs.existsSync(upstreamFile)) return { upstreams: [] };
@@ -244,3 +244,4 @@ export async function upstreamCommand(args: string[]): Promise<void> {
     info(`\n${synced}/${toSync.length} upstream(s) synced.\n`);
   }
 }
+

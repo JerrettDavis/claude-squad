@@ -10,8 +10,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
-import { loadSubSquadsConfig, resolveSubSquad } from '@bradygaster/squad-sdk';
-import type { SubSquadDefinition } from '@bradygaster/squad-sdk';
+import { loadSubSquadsConfig, resolveSubSquad } from '@jerrettdavis/squad-sdk';
+import type { SubSquadDefinition } from '@jerrettdavis/squad-sdk';
 
 const BOLD = '\x1b[1m';
 const RESET = '\x1b[0m';
@@ -174,3 +174,4 @@ function activateSubSquad(cwd: string, name: string): void {
   console.log(`  Written to: ${workstreamFilePath}`);
   console.log(`${DIM}  (This file is gitignored — it's local to your machine/Codespace)${RESET}\n`);
 }
+

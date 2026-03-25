@@ -13,7 +13,7 @@ import {
   setupConsultMode,
   isConsultMode,
   PersonalSquadNotFoundError,
-} from '@bradygaster/squad-sdk';
+} from '@jerrettdavis/squad-sdk';
 import { fatal } from '../core/errors.js';
 
 /**
@@ -96,3 +96,4 @@ export async function runConsult(cwd: string, args: string[]): Promise<void> {
     throw error;
   }
 }
+

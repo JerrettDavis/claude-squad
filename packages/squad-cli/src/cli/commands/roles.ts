@@ -1,4 +1,4 @@
-import { listRoles, searchRoles, getCategories } from '@bradygaster/squad-sdk';
+import { listRoles, searchRoles, getCategories } from '@jerrettdavis/squad-sdk';
 
 type RoleRecord = ReturnType<typeof listRoles>[number];
 
@@ -69,3 +69,4 @@ export async function runRoles(args: string[]): Promise<void> {
     console.log();
   }
 }
+

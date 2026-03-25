@@ -20,7 +20,7 @@ import {
   type SquadDirConfig,
   type LicenseInfo,
   type StagedLearning,
-} from '@bradygaster/squad-sdk';
+} from '@jerrettdavis/squad-sdk';
 import { fatal } from '../core/errors.js';
 
 /**
@@ -324,3 +324,4 @@ export async function runExtract(cwd: string, args: string[]): Promise<void> {
     console.log('🗑️  Deleted .squad/');
   }
 }
+

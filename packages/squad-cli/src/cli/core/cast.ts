@@ -10,12 +10,12 @@ import {
   getRoleById,
   generateCharterFromRole,
   addAgentToConfig,
-} from '@bradygaster/squad-sdk';
+} from '@jerrettdavis/squad-sdk';
 import {
   CastingEngine,
   type CastMember as EngineCastMember,
   type AgentRole as EngineAgentRole,
-} from '@bradygaster/squad-sdk/casting';
+} from '@jerrettdavis/squad-sdk/casting';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -677,3 +677,4 @@ export function formatCastSummary(proposal: CastProposal): string {
 
   return lines.join('\n');
 }
+

@@ -17,13 +17,13 @@ import { SessionRegistry } from './sessions.js';
 import { ShellRenderer } from './render.js';
 import { StreamBridge } from './stream-bridge.js';
 import { ShellLifecycle, loadWelcomeData } from './lifecycle.js';
-import { SquadClient } from '@bradygaster/squad-sdk/client';
-import type { SquadSession } from '@bradygaster/squad-sdk/client';
-import type { SquadPermissionHandler } from '@bradygaster/squad-sdk/client';
-import { RateLimitError } from '@bradygaster/squad-sdk/adapter/errors';
+import { SquadClient } from '@jerrettdavis/squad-sdk/client';
+import type { SquadSession } from '@jerrettdavis/squad-sdk/client';
+import type { SquadPermissionHandler } from '@jerrettdavis/squad-sdk/client';
+import { RateLimitError } from '@jerrettdavis/squad-sdk/adapter/errors';
 import type { ShellMessage } from './types.js';
-import { initSquadTelemetry, TIMEOUTS, StreamingPipeline, recordAgentSpawn, recordAgentDuration, recordAgentError, recordAgentDestroy, RuntimeEventBus, resolveSquad, resolveGlobalSquadPath } from '@bradygaster/squad-sdk';
-import type { UsageEvent } from '@bradygaster/squad-sdk';
+import { initSquadTelemetry, TIMEOUTS, StreamingPipeline, recordAgentSpawn, recordAgentDuration, recordAgentError, recordAgentDestroy, RuntimeEventBus, resolveSquad, resolveGlobalSquadPath } from '@jerrettdavis/squad-sdk';
+import type { UsageEvent } from '@jerrettdavis/squad-sdk';
 import { enableShellMetrics, recordShellSessionDuration, recordAgentResponseLatency, recordShellError } from './shell-metrics.js';
 import { parseAgentFromDescription } from './agent-name-parser.js';
 import { buildCoordinatorPrompt, buildInitModePrompt, parseCoordinatorResponse, hasRosterEntries } from './coordinator.js';
@@ -1350,3 +1350,4 @@ export async function runShell(): Promise<void> {
     process.exit(_shellSignalCode);
   }
 }
+

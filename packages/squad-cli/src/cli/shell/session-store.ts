@@ -8,7 +8,7 @@
 import { randomUUID } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { safeTimestamp } from '@bradygaster/squad-sdk';
+import { safeTimestamp } from '@jerrettdavis/squad-sdk';
 import type { ShellMessage } from './types.js';
 
 /** Serialisable session envelope persisted to disk. */
@@ -154,3 +154,4 @@ function findSessionFile(dir: string, sessionId: string): string | null {
   const match = files.find(f => f.includes(sessionId) && f.endsWith('.json'));
   return match ? join(dir, match) : null;
 }
+

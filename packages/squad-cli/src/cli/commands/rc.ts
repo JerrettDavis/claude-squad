@@ -8,8 +8,8 @@
 import path from 'node:path';
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { RemoteBridge } from '@bradygaster/squad-sdk';
-import type { RemoteBridgeConfig } from '@bradygaster/squad-sdk';
+import { RemoteBridge } from '@jerrettdavis/squad-sdk';
+import type { RemoteBridgeConfig } from '@jerrettdavis/squad-sdk';
 import {
   isDevtunnelAvailable,
   createTunnel,
@@ -302,3 +302,4 @@ export async function runRC(cwd: string, options: RCOptions): Promise<void> {
   // Keep process alive
   await new Promise(() => {});
 }
+

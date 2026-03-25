@@ -7,9 +7,9 @@
  * @module cli/commands/cast
  */
 
-import { LocalAgentSource } from '@bradygaster/squad-sdk/config/agent-source';
-import { resolvePersonalAgents, mergeSessionCast } from '@bradygaster/squad-sdk/agents/personal';
-import { resolveSquadPaths } from '@bradygaster/squad-sdk/resolution';
+import { LocalAgentSource } from '@jerrettdavis/squad-sdk/config/agent-source';
+import { resolvePersonalAgents, mergeSessionCast } from '@jerrettdavis/squad-sdk/agents/personal';
+import { resolveSquadPaths } from '@jerrettdavis/squad-sdk/resolution';
 import { BOLD, RESET, DIM, GREEN, YELLOW } from '../core/output.js';
 import { fatal } from '../core/errors.js';
 
@@ -99,3 +99,4 @@ export async function runCast(cwd: string): Promise<void> {
     console.log();
   }
 }
+

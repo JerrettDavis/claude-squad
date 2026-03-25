@@ -2,7 +2,7 @@
  * Self-update check — Phase 1: background version check with notification.
  *
  * Non-blocking startup check that queries the npm registry for the latest
- * version of @bradygaster/squad-cli and displays a passive banner when
+ * version of @jerrettdavis/squad-cli and displays a passive banner when
  * an update is available. Results are cached for 24 hours.
  *
  * Disable with: SQUAD_NO_UPDATE_CHECK=1
@@ -16,7 +16,7 @@ import os from 'node:os';
 import { compareVersions } from './upgrade.js';
 import { BOLD, RESET, DIM, YELLOW } from './core/output.js';
 
-const PACKAGE_NAME = '@bradygaster/squad-cli';
+const PACKAGE_NAME = '@jerrettdavis/squad-cli';
 const REGISTRY_URL = `https://registry.npmjs.org/${PACKAGE_NAME}`;
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
 const FETCH_TIMEOUT_MS = 3000; // 3 seconds
@@ -113,10 +113,11 @@ export async function notifyIfUpdateAvailable(currentVersion: string): Promise<v
     if (compareVersions(latest, currentVersion) > 0) {
       console.log(
         `\n${YELLOW}⚡${RESET} ${BOLD}Squad v${latest}${RESET} available ${DIM}(you have v${currentVersion})${RESET}` +
-        `\n   Run: ${BOLD}npm install -g @bradygaster/squad-cli@latest${RESET}\n`,
+        `\n   Run: ${BOLD}npm install -g @jerrettdavis/squad-cli@latest${RESET}\n`,
       );
     }
   } catch {
     // Absolute safety net — never crash the CLI for an update check
   }
 }
+

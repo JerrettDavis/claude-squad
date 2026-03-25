@@ -11,7 +11,7 @@ import { success, BOLD, RESET, YELLOW, GREEN, DIM } from './output.js';
 import { fatal } from './errors.js';
 import { detectProjectType } from './project-type.js';
 import { getPackageVersion, stampVersion } from './version.js';
-import { initSquad as sdkInitSquad, cleanupOrphanInitPrompt, ensurePersonalSquadDir, resolvePersonalSquadDir, type InitOptions } from '@bradygaster/squad-sdk';
+import { initSquad as sdkInitSquad, cleanupOrphanInitPrompt, ensurePersonalSquadDir, resolvePersonalSquadDir, type InitOptions } from '@jerrettdavis/squad-sdk';
 
 const CYAN = '\x1b[36m';
 
@@ -85,7 +85,7 @@ const INIT_LANDMARKS = [
 function showDeprecationWarning(): void {
   console.log();
   console.log(`${YELLOW}⚠️  DEPRECATION: .ai-team/ is deprecated and will be removed in v1.0.0${RESET}`);
-  console.log(`${YELLOW}    Run 'npx @bradygaster/squad-cli upgrade --migrate-directory' to migrate to .squad/${RESET}`);
+  console.log(`${YELLOW}    Run 'npx @jerrettdavis/squad-cli upgrade --migrate-directory' to migrate to .squad/${RESET}`);
   console.log(`${YELLOW}    Details: https://github.com/bradygaster/squad/issues/101${RESET}`);
   console.log();
 }
@@ -318,3 +318,4 @@ export async function runInit(dest: string, options: RunInitOptions = {}): Promi
     showDeprecationWarning();
   }
 }
+

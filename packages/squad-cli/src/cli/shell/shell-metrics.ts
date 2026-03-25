@@ -10,7 +10,7 @@
  * @module shell/shell-metrics
  */
 
-import { getMeter } from '@bradygaster/squad-sdk';
+import { getMeter } from '@jerrettdavis/squad-sdk';
 
 // ============================================================================
 // Types
@@ -121,3 +121,4 @@ export function _resetShellMetrics(): void {
   _metrics = undefined;
   _enabled = false;
 }
+

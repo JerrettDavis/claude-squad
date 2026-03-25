@@ -9,7 +9,7 @@
 
 import { join } from 'node:path';
 import { existsSync, readFileSync } from 'node:fs';
-import { writeEconomyMode, readEconomyMode } from '@bradygaster/squad-sdk/config';
+import { writeEconomyMode, readEconomyMode } from '@jerrettdavis/squad-sdk/config';
 import { fatal } from '../core/errors.js';
 import { BOLD, RESET, GREEN, DIM } from '../core/output.js';
 
@@ -66,3 +66,4 @@ export async function runEconomy(cwd: string, subArgs: string[]): Promise<void> 
     console.log(`  Usage: squad economy on | off\n`);
   }
 }
+

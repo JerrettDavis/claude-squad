@@ -63,11 +63,11 @@ const MIGRATION_STEPS: Record<string, MigrationStep[]> = {
   ],
   'npm-global->npx-github': [
     { description: 'Uninstall the global npm package', command: 'npm uninstall -g @bradygaster/squad' },
-    { description: 'Use npx to run from npm', command: 'npx @bradygaster/squad-cli' },
+    { description: 'Use npx to run from npm', command: 'npx @jerrettdavis/squad-cli' },
   ],
   'npm-local->npx-github': [
     { description: 'Remove squad from local dependencies', command: 'npm uninstall @bradygaster/squad' },
-    { description: 'Use npx to run from npm', command: 'npx @bradygaster/squad-cli' },
+    { description: 'Use npx to run from npm', command: 'npx @jerrettdavis/squad-cli' },
   ],
 };
 
@@ -130,3 +130,4 @@ export function generateMigrationInstructions(from: InstallMethod, to: InstallMe
 
   return lines.join('\n').trimEnd() + '\n';
 }
+

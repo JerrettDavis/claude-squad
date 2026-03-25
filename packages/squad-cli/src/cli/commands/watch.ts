@@ -13,15 +13,15 @@ import {
   parseRoster,
   triageIssue,
   type TriageIssue,
-} from '@bradygaster/squad-sdk/ralph/triage';
-import { RalphMonitor } from '@bradygaster/squad-sdk/ralph';
-import { EventBus } from '@bradygaster/squad-sdk/runtime/event-bus';
+} from '@jerrettdavis/squad-sdk/ralph/triage';
+import { RalphMonitor } from '@jerrettdavis/squad-sdk/ralph';
+import { EventBus } from '@jerrettdavis/squad-sdk/runtime/event-bus';
 import { ghAvailable, ghAuthenticated, ghIssueList, ghIssueEdit, ghPrList, ghRateLimitCheck, isRateLimitError, type GhIssue, type GhPullRequest } from '../core/gh-cli.js';
-import type { MachineCapabilities } from '@bradygaster/squad-sdk/ralph/capabilities';
+import type { MachineCapabilities } from '@jerrettdavis/squad-sdk/ralph/capabilities';
 import {
   PredictiveCircuitBreaker,
   getTrafficLight,
-} from '@bradygaster/squad-sdk/ralph/rate-limiting';
+} from '@jerrettdavis/squad-sdk/ralph/rate-limiting';
 
 export interface BoardState {
   untriaged: number;
@@ -170,7 +170,7 @@ async function runCheck(
     const issues = await ghIssueList({ label: 'squad', state: 'open', limit: 20 });
     
     // Filter by machine capabilities (#514)
-    const { filterByCapabilities } = await import('@bradygaster/squad-sdk/ralph/capabilities');
+    const { filterByCapabilities } = await import('@jerrettdavis/squad-sdk/ralph/capabilities');
     const { handled: capableIssues, skipped: incapableIssues } = filterByCapabilities(issues, capabilities);
     
     for (const { issue, missing } of incapableIssues) {
@@ -325,7 +325,7 @@ export async function runWatch(dest: string, intervalMinutes: number): Promise<v
   const modules = parseModuleOwnership(routingContent);
   
   // Load machine capabilities for needs:* label filtering (#514)
-  const { loadCapabilities } = await import('@bradygaster/squad-sdk/ralph/capabilities');
+  const { loadCapabilities } = await import('@jerrettdavis/squad-sdk/ralph/capabilities');
   const capabilities = await loadCapabilities(path.dirname(squadDirInfo.path));
   
   if (capabilities) {
@@ -496,3 +496,4 @@ export async function runWatch(dest: string, intervalMinutes: number): Promise<v
     process.on('SIGTERM', shutdown);
   });
 }
+

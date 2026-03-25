@@ -8,7 +8,7 @@
  * @module cli/upgrade
  */
 
-import { MigrationRegistry } from '@bradygaster/squad-sdk/config';
+import { MigrationRegistry } from '@jerrettdavis/squad-sdk/config';
 
 // ============================================================================
 // Types
@@ -359,3 +359,4 @@ function toStrictSemver(version: string): string {
   const parsed = parseVersion(version);
   return `${parsed.major}.${parsed.minor}.${parsed.patch}`;
 }
+

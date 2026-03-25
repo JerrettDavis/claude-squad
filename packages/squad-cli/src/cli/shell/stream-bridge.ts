@@ -12,7 +12,7 @@ import type {
   StreamDelta,
   UsageEvent,
   ReasoningDelta,
-} from '@bradygaster/squad-sdk/runtime/streaming';
+} from '@jerrettdavis/squad-sdk/runtime/streaming';
 import type { SessionRegistry } from './sessions.js';
 import type { ShellMessage } from './types.js';
 
@@ -150,3 +150,4 @@ export class StreamBridge {
     this.options.onReasoning?.(agentName, event.content);
   }
 }
+
