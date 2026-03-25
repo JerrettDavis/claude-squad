@@ -103,3 +103,4 @@ export type {
 export * from './roles/index.js';
 export * from './platform/index.js';
 export * from './runtime/providers/index.js';
+export * from './runtime/resolver.js';
