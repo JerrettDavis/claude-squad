@@ -253,7 +253,14 @@ export async function runShell(): Promise<void> {
 
   // Eager SDK warm-up — start coordinator session before user's first message
   // This runs in background so UI renders immediately
+  const orchestrator = (process.env['SQUAD_ORCHESTRATOR'] ?? '').toLowerCase();
+  const agenthubUrl = process.env['SQUAD_AGENTHUB_URL'] ?? 'http://localhost:8787';
+
   (async () => {
+    if (orchestrator === 'agenthub') {
+      debugLog('eager warm-up skipped (agenthub orchestrator mode)');
+      return;
+    }
     try {
       debugLog('eager warm-up: creating coordinator session');
       const systemPrompt = buildCoordinatorPrompt({ teamRoot });
@@ -576,6 +583,49 @@ export async function runShell(): Promise<void> {
 
   async function dispatchToCoordinator(message: string): Promise<void> {
     debugLog('dispatchToCoordinator: sending message', message.slice(0, 120));
+
+    // AgentHub mode: submit to self-hosted orchestrator instead of GitHub/Copilot session backend
+    if (orchestrator === 'agenthub') {
+      shellApi?.setActivityHint('Submitting to AgentHub...');
+      try {
+        const response = await fetch(`${agenthubUrl.replace(/\/$/, '')}/v1/jobs`, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({
+            pipe: 'agenthub',
+            prompt: message,
+            parameters: {
+              orchestrator: 'agenthub',
+              agenthubUrl,
+              teamRoot,
+            },
+            meta: {
+              source: 'squad-cli-shell',
+            },
+          }),
+        });
+        const data = await response.json() as { id?: string; status?: string; error?: string; message?: string };
+        if (!response.ok) {
+          throw new Error(data.message || data.error || `AgentHub HTTP ${response.status}`);
+        }
+        shellApi?.addMessage({
+          role: 'agent',
+          agentName: 'coordinator',
+          content: `AgentHub accepted job ${data.id ?? '(unknown id)'} (${data.status ?? 'queued'}).`,
+          timestamp: new Date(),
+        });
+      } catch (err) {
+        shellApi?.addMessage({
+          role: 'system',
+          content: `AgentHub submission failed: ${(err as Error).message}`,
+          timestamp: new Date(),
+        });
+      } finally {
+        shellApi?.setActivityHint('');
+      }
+      return;
+    }
+
     const coordStartMs = Date.now();
     let coordFirstToken = false;
     let coordError = false;

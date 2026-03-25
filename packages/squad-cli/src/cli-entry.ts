@@ -116,6 +116,18 @@ async function main(): Promise<void> {
     // Remove --team-root and its value from args
     args.splice(teamRootIdx, 2);
   }
+
+  // --orchestrator + --agenthub-url flags for self-hosted AgentHub routing
+  const orchestratorIdx = args.indexOf('--orchestrator');
+  if (orchestratorIdx !== -1 && args[orchestratorIdx + 1]) {
+    process.env['SQUAD_ORCHESTRATOR'] = args[orchestratorIdx + 1]!;
+    args.splice(orchestratorIdx, 2);
+  }
+  const agenthubUrlIdx = args.indexOf('--agenthub-url');
+  if (agenthubUrlIdx !== -1 && args[agenthubUrlIdx + 1]) {
+    process.env['SQUAD_AGENTHUB_URL'] = args[agenthubUrlIdx + 1]!;
+    args.splice(agenthubUrlIdx, 2);
+  }
   
   const hasGlobal = args.includes('--global');
   // --economy activates economy mode for this session (sets env var for spawner)
@@ -231,6 +243,8 @@ async function main(): Promise<void> {
     console.log(`  ${BOLD}--global${RESET}       Use personal (global) squad path (for init, upgrade)`);
     console.log(`  ${BOLD}--economy${RESET}      Activate economy mode for this session (cheaper models)`);
     console.log(`  ${BOLD}--team-root${RESET}    Override team root path for resolution`);
+    console.log(`  ${BOLD}--orchestrator${RESET} Route execution backend (e.g., agenthub)`);
+    console.log(`  ${BOLD}--agenthub-url${RESET} AgentHub base URL (e.g., http://localhost:8787)`);
     console.log(`\nInstallation:`);
     console.log(`  npm install --save-dev @jerrettdavis/squad-cli`);
     console.log(`\nInsider channel:`);

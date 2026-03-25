@@ -105,11 +105,17 @@ For local/remote orchestration without GitHub as the backend, this repo now incl
 npm run agenthub:serve
 ```
 
+Route shell orchestration to AgentHub:
+
+```bash
+squad --orchestrator agenthub --agenthub-url http://localhost:8787
+```
+
 See [`AGENTHUB.md`](AGENTHUB.md) for:
 - API endpoints
 - local + Docker run modes
-- proposed `pipe=agenthub` + `orchestrator=agenthub` parameter contract
-- next steps for CLI/runtime wiring
+- `pipe=agenthub` + `orchestrator=agenthub` parameter contract
+- next steps for broader CLI/runtime wiring
 
 ## Fork main branch (JerrettDavis) — install, publish, and run
 
