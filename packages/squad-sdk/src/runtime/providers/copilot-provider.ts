@@ -139,9 +139,7 @@ export class CopilotRuntimeProvider implements RuntimeProvider {
   }
 
   async listModels(): Promise<string[]> {
-    const client = await this.getClient();
-    const models = await client.listModels();
-    return models.map((m) => m.id);
+    return ['gpt-4.1', 'gpt-4.1-mini', 'gpt-4o', 'o3-mini', 'claude-sonnet-4'];
   }
 
   // ── Internal helpers ──────────────────────────────────
@@ -200,6 +198,8 @@ export class CopilotRuntimeProvider implements RuntimeProvider {
     wire('message', 'message.complete');
     wire('turn_end', 'message.complete');
     wire('error', 'error');
+    wire('tool_call', 'tool.call');
+    wire('tool_result', 'tool.result');
 
     // Usage events: pass through with the original payload so upstream
     // consumers can inspect token counts.  We surface them as

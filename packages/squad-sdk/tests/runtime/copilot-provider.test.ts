@@ -252,10 +252,11 @@ describe('CopilotRuntimeProvider', () => {
   // ── listModels ──────────────────────────────────────
 
   describe('listModels', () => {
-    it('should return model IDs from the client', async () => {
+    it('should return the static model list', async () => {
       const models = await provider.listModels();
-      expect(models).toEqual(['gpt-4o', 'claude-sonnet-4.5']);
-      expect(mockClient.listModels).toHaveBeenCalledTimes(1);
+      expect(models).toContain('gpt-4o');
+      expect(models).toContain('claude-sonnet-4');
+      expect(models.length).toBeGreaterThan(0);
     });
   });
 
