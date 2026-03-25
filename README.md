@@ -21,6 +21,19 @@ It's not a chatbot wearing hats. Each team member runs in its own context, reads
 
 ## Quick Start
 
+### Fork Quickstart (JerrettDavis `main`)
+
+If you are using the fork directly, use the `@jerrettdavis/*` packages:
+
+```bash
+npm install -g @jerrettdavis/squad-cli
+npm install @jerrettdavis/squad-sdk
+```
+
+For publishing from the fork, use:
+- `.github/workflows/fork-publish.yml` (GitHub Packages by default)
+- optional npmjs publish with `publishToNpm=true` + `NPM_TOKEN`
+
 ### 1. Create your project
 
 ```bash
