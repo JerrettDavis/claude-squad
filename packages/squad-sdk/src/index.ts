@@ -102,3 +102,4 @@ export type {
 // Base Roles (built-in role catalog)
 export * from './roles/index.js';
 export * from './platform/index.js';
+export * from './runtime/providers/index.js';
