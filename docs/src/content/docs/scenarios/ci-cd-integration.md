@@ -8,7 +8,7 @@
 Enable Ralph's heartbeat workflow to triage issues automatically
 ```
 
-Ralph runs periodically via GitHub Actions to handle housekeeping between Copilot sessions — triage new issues, apply squad labels, check stale branches, archive old decisions.
+Ralph runs periodically via GitHub Actions to handle housekeeping between provider sessions — triage new issues, apply squad labels, check stale branches, archive old decisions.
 
 ---
 
@@ -54,7 +54,7 @@ Issue #42: "Add Stripe payment integration"
   → priority:high
 ```
 
-Now when you open Copilot, you see issues pre-triaged.
+Now when you open your provider session, you see issues pre-triaged.
 
 ---
 
@@ -69,7 +69,7 @@ Squad uses GitHub labels to drive workflows:
 - `squad:tank` — routed to Tank (Tester)
 
 **Control labels**:
-- `go:neo` — tells Copilot to auto-assign this issue to Neo
+- `go:neo` — tells the coding agent workflow to auto-assign this issue to Neo
 - `go:trinity` — auto-assign to Trinity
 - `go:morpheus` — auto-assign to Morpheus
 - `go:tank` — auto-assign to Tank
@@ -94,23 +94,23 @@ Ralph applies `squad:*` and `type:*` labels automatically. You apply `go:*` labe
 
 ---
 
-## 3. @copilot Auto-Assign for Autonomous Issue Processing
+## 3. Coding-Agent Auto-Assign for Autonomous Issue Processing
 
-When you add a `go:*` label to an issue, the `@copilot` automation picks it up:
+When you add a `go:*` label to an issue, the coding-agent automation picks it up:
 
 1. Ralph labels issue #42 with `squad:morpheus` (backend work)
 2. You review the issue and add `go:morpheus` (approval to proceed)
-3. GitHub Actions triggers the `@copilot` workflow
-4. Copilot session spawns Morpheus to handle the issue
+3. GitHub Actions triggers the coding-agent workflow
+4. Provider session spawns Morpheus to handle the issue
 5. Morpheus reads the issue, implements the feature, opens a PR
 6. PR is tagged for human review
 
-**This is autonomous issue processing.** You don't open Copilot manually — the workflow does.
+**This is autonomous issue processing.** You don't open a provider session manually — the workflow does.
 
 Workflow file: `.github/workflows/copilot-auto-assign.yml`:
 
 ```yaml
-name: Copilot Auto-Assign
+name: Coding Agent Auto-Assign
 on:
   issues:
     types: [labeled]
@@ -126,24 +126,27 @@ jobs:
         run: echo "agent=${LABEL#go:}" >> $GITHUB_OUTPUT
         env:
           LABEL: ${{ github.event.label.name }}
-      - name: Spawn Copilot session
+      - name: Spawn coding-agent session
         run: |
+          # Copilot path
           copilot --agent squad --message "${{ steps.agent.outputs.agent }}, handle issue #${{ github.event.issue.number }}"
+          # Claude Code path (alternative)
+          claude --agent squad --print "${{ steps.agent.outputs.agent }}, handle issue #${{ github.event.issue.number }}"
 ```
 
-**Note:** This workflow requires GitHub Actions to have access to your Copilot session. See GitHub's docs for `gh copilot` in Actions.
+**Note:** This workflow requires GitHub Actions to have access to your selected provider session. See GitHub's docs for `copilot/claude CLI` in Actions.
 
 ---
 
 ## 4. What You CAN'T Do: Agents Can't Run in Actions (Yet)
 
-**Squad agents require a live Copilot session.** They can't run in a GitHub Actions runner without Copilot CLI access.
+**Squad agents require a live provider session.** They can't run in a GitHub Actions runner without provider CLI access.
 
 This means:
 
 ❌ You **can't** run `Squad, build the feature` inside a GitHub Actions workflow  
 ✅ You **can** use Ralph to triage and label issues  
-✅ You **can** trigger Copilot sessions via Actions (if you have `gh copilot` access)  
+✅ You **can** trigger provider sessions via Actions (if you have `copilot/claude CLI` access)  
 ❌ You **can't** have agents autonomously merge PRs without human approval (by design)
 
 ---
@@ -153,8 +156,8 @@ This means:
 1. **User files issue** #42: "Add Stripe payment integration"
 2. **Ralph (heartbeat)** runs, reads routing rules, applies `squad:morpheus` and `type:feature`
 3. **You review** the issue, decide it's good, add `go:morpheus` label
-4. **GitHub Actions** triggers Copilot auto-assign workflow
-5. **Copilot spawns Morpheus** to handle issue #42
+4. **GitHub Actions** triggers coding-agent auto-assign workflow
+5. **Provider session spawns Morpheus** to handle issue #42
 6. **Morpheus builds** the Stripe integration, writes tests, opens PR #43
 7. **Neo (Lead) reviews** PR #43, approves or requests changes
 8. **You merge** PR #43 after human review
@@ -168,7 +171,7 @@ Steps 2, 4, 5, 6, 7 are **automated**. You only do steps 3 and 8.
 When you run `squad`, these workflow templates are installed:
 
 - `.squad/templates/workflows/squad-heartbeat.yml` → Ralph runs every 6 hours
-- `.squad/templates/workflows/copilot-auto-assign.yml` → Triggers Copilot on `go:*` labels
+- `.squad/templates/workflows/coding-agent-auto-assign.yml` (or provider-specific variant) → Triggers coding-agent sessions on `go:*` labels
 - `.squad/templates/workflows/pr-review-reminder.yml` → Reminds you of open PRs needing review
 
 To activate them:

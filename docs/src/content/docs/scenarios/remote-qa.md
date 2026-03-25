@@ -6,6 +6,8 @@
 **Try this:**
 ```
 @copilot How does authentication work in this project?
+# or
+@claude How does authentication work in this project?
 ```
 
 You don't always have the repo cloned locally. Sometimes you want to ask your Squad a question from the browser, the GitHub CLI, or a mobile device — without pulling code.
@@ -29,13 +31,13 @@ If the repo has `.github/agents/squad.agent.md`, GitHub Copilot Chat reads it au
 
 **Limitation:** Copilot reads the default branch only. You can't point it at a feature branch.
 
-### 2. Assign an issue to @copilot
+### 2. Assign an issue to a coding agent (@copilot or @claude)
 
-Create a GitHub issue and assign it to `@copilot`. If the repo has Squad's issue-assign workflow (`.github/workflows/squad-issue-assign.yml`), the coding agent picks up the issue and works it using your Squad configuration.
+Create a GitHub issue and assign it to your configured coding agent (`@copilot` or `@claude`). If the repo has Squad's issue-assign workflow (`.github/workflows/squad-issue-assign.yml`), the coding agent picks up the issue and works it using your Squad configuration.
 
 **How it works:**
 1. Create an issue describing the question or task
-2. Assign it to `@copilot`
+2. Assign it to your coding agent (`@copilot` or `@claude`)
 3. The workflow triggers and Squad processes it
 
 **Good for:** Tasks that need code changes, research across files, or multi-step investigation.
@@ -80,6 +82,6 @@ A `/squad ask "question"` command in issue comments that triggers Squad to respo
 ## Tips
 
 - **Start with Copilot Chat.** It's the lowest-effort path and works today for repos with `squad.agent.md`.
-- **Use issues for anything that needs code.** Copilot Chat answers questions; issues drive work.
+- **Use issues for anything that needs code.** Provider chat answers questions; issues drive work.
 - **Include context in your question.** Remote paths don't have your local state. Be specific about which files, features, or branches you mean.
 - **Check the default branch.** All remote paths currently read `main` (or whatever the repo's default branch is). If you're asking about unreleased work, mention the branch explicitly.

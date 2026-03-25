@@ -22,7 +22,7 @@ Squad runs entirely in your Copilot session. Nothing leaves your machine except 
 
 ## 1. Where Squad Runs
 
-Squad is a **local agent** that runs in your GitHub Copilot CLI session. It doesn't phone home. It doesn't send data to a Squad server. It doesn't use external APIs.
+Squad is a **local agent** that runs in your provider CLI session (Copilot or Claude Code). It doesn't phone home. It doesn't send data to a Squad server. It doesn't use external APIs.
 
 When you run:
 
