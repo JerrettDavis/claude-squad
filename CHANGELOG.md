@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.9.1] - 2026-03-25
+
+### Added - Fork Distribution & Publishing (JerrettDavis)
+- Added fork-specific publish workflow: `.github/workflows/fork-publish.yml`
+- GitHub Packages publish path enabled by default for fork builds
+- Optional npmjs publish path gated by workflow input + `NPM_TOKEN`
+
+### Changed - Fork Package Scope & Install Guidance
+- Package scope aligned for fork usage: `@jerrettdavis/squad`, `@jerrettdavis/squad-sdk`, `@jerrettdavis/squad-cli`
+- Updated README with fork quickstart, install, publish, and local test instructions
+- Updated CLI/SDK source import paths and install hints to fork scope for local release readiness
+
+### Fixed - Main Branch CI/CD Release Gate
+- Restored release workflow version gate compliance by adding explicit `0.9.1` changelog entry
+
 ## [0.9.0] - 2026-03-23
 
 ### Added — Personal Squad Governance Layer
