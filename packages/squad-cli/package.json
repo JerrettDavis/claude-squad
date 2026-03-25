@@ -1,5 +1,5 @@
 {
-  "name": "@bradygaster/squad-cli",
+  "name": "@jerrettdavis/squad-cli",
   "version": "0.9.1-build.4",
   "description": "Squad CLI — Command-line interface for the Squad multi-agent runtime",
   "type": "module",
@@ -177,10 +177,10 @@
     "node": ">=22.5.0"
   },
   "dependencies": {
-    "@bradygaster/squad-sdk": ">=0.9.0",
     "ink": "^6.8.0",
     "react": "^19.2.4",
-    "vscode-jsonrpc": "^8.2.1"
+    "vscode-jsonrpc": "^8.2.1",
+    "@jerrettdavis/squad-sdk": ">=0.9.0"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
@@ -196,13 +196,13 @@
     "cli"
   ],
   "license": "MIT",
-  "homepage": "https://github.com/bradygaster/squad#readme",
+  "homepage": "https://github.com/JerrettDavis/claude-squad#readme",
   "bugs": {
-    "url": "https://github.com/bradygaster/squad/issues"
+    "url": "https://github.com/JerrettDavis/claude-squad/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bradygaster/squad.git",
+    "url": "git+https://github.com/JerrettDavis/claude-squad.git",
     "directory": "packages/squad-cli"
   }
 }

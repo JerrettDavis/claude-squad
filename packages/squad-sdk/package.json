@@ -1,5 +1,5 @@
 {
-  "name": "@bradygaster/squad-sdk",
+  "name": "@jerrettdavis/squad-sdk",
   "version": "0.9.1",
   "description": "Squad SDK — Programmable multi-agent runtime for GitHub Copilot",
   "type": "module",
@@ -227,13 +227,13 @@
     "sdk"
   ],
   "license": "MIT",
-  "homepage": "https://github.com/bradygaster/squad#readme",
+  "homepage": "https://github.com/JerrettDavis/claude-squad#readme",
   "bugs": {
-    "url": "https://github.com/bradygaster/squad/issues"
+    "url": "https://github.com/JerrettDavis/claude-squad/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bradygaster/squad.git",
+    "url": "git+https://github.com/JerrettDavis/claude-squad.git",
     "directory": "packages/squad-sdk"
   }
 }

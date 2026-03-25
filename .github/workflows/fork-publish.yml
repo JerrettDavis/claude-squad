@@ -1,0 +1,140 @@
+name: Fork Publish Packages
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to publish (e.g. 0.9.1-fork.1). If empty, uses package.json version.'
+        required: false
+        type: string
+      npmScope:
+        description: 'Package scope (without @), e.g. jerrettdavis'
+        required: false
+        default: 'jerrettdavis'
+        type: string
+      publishToNpm:
+        description: 'Also publish to npmjs.org (requires NPM_TOKEN)'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+
+jobs:
+  publish-github-packages:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://npm.pkg.github.com
+
+      - name: Rewrite package scope/references for fork
+        shell: bash
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const scope = (process.env.NPM_SCOPE || 'jerrettdavis').toLowerCase();
+          const files = [
+            'package.json',
+            'packages/squad-sdk/package.json',
+            'packages/squad-cli/package.json'
+          ];
+          for (const f of files) {
+            const j = JSON.parse(fs.readFileSync(f, 'utf8'));
+            if (j.name) j.name = j.name.replace(/^@[^/]+\//, `@${scope}/`);
+            if (j.homepage) j.homepage = j.homepage.replace('github.com/bradygaster/squad', 'github.com/JerrettDavis/claude-squad');
+            if (j.bugs?.url) j.bugs.url = j.bugs.url.replace('github.com/bradygaster/squad', 'github.com/JerrettDavis/claude-squad');
+            if (j.repository?.url) j.repository.url = j.repository.url.replace('github.com/bradygaster/squad', 'github.com/JerrettDavis/claude-squad');
+            if (j.dependencies && j.dependencies['@bradygaster/squad-sdk']) {
+              j.dependencies[`@${scope}/squad-sdk`] = j.dependencies['@bradygaster/squad-sdk'];
+              delete j.dependencies['@bradygaster/squad-sdk'];
+            }
+            fs.writeFileSync(f, JSON.stringify(j, null, 2) + '\n');
+          }
+          NODE
+        env:
+          NPM_SCOPE: ${{ inputs.npmScope }}
+
+      - name: Optionally set version
+        if: ${{ inputs.version != '' }}
+        run: |
+          npm version "${{ inputs.version }}" --no-git-tag-version --allow-same-version
+          npm -w packages/squad-sdk version "${{ inputs.version }}" --no-git-tag-version --allow-same-version
+          npm -w packages/squad-cli version "${{ inputs.version }}" --no-git-tag-version --allow-same-version
+
+      - run: npm ci
+      - run: npm -w packages/squad-sdk run build
+      - run: npm -w packages/squad-cli run build
+
+      - name: Publish SDK to GitHub Packages
+        run: npm -w packages/squad-sdk publish --access restricted
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish CLI to GitHub Packages
+        run: npm -w packages/squad-cli publish --access restricted
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish-npmjs:
+    if: ${{ inputs.publishToNpm }}
+    needs: publish-github-packages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+
+      - name: Rewrite package scope/references for fork
+        shell: bash
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const scope = (process.env.NPM_SCOPE || 'jerrettdavis').toLowerCase();
+          const files = [
+            'package.json',
+            'packages/squad-sdk/package.json',
+            'packages/squad-cli/package.json'
+          ];
+          for (const f of files) {
+            const j = JSON.parse(fs.readFileSync(f, 'utf8'));
+            if (j.name) j.name = j.name.replace(/^@[^/]+\//, `@${scope}/`);
+            if (j.dependencies && j.dependencies['@bradygaster/squad-sdk']) {
+              j.dependencies[`@${scope}/squad-sdk`] = j.dependencies['@bradygaster/squad-sdk'];
+              delete j.dependencies['@bradygaster/squad-sdk'];
+            }
+            fs.writeFileSync(f, JSON.stringify(j, null, 2) + '\n');
+          }
+          NODE
+        env:
+          NPM_SCOPE: ${{ inputs.npmScope }}
+
+      - name: Optionally set version
+        if: ${{ inputs.version != '' }}
+        run: |
+          npm version "${{ inputs.version }}" --no-git-tag-version --allow-same-version
+          npm -w packages/squad-sdk version "${{ inputs.version }}" --no-git-tag-version --allow-same-version
+          npm -w packages/squad-cli version "${{ inputs.version }}" --no-git-tag-version --allow-same-version
+
+      - run: npm ci
+      - run: npm -w packages/squad-sdk run build
+      - run: npm -w packages/squad-cli run build
+
+      - name: Publish SDK to npmjs
+        run: npm -w packages/squad-sdk publish --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish CLI to npmjs
+        run: npm -w packages/squad-cli publish --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
