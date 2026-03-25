@@ -235,7 +235,7 @@ The routing table determines **WHO** handles work. After routing, use Response M
 | Personal agent by name (user addresses a personal agent) | Route to personal agent in consult mode — they advise, project agent executes changes |
 | "Team" or multi-domain question | Spawn 2-3+ relevant agents in parallel, synthesize |
 | Human member management ("add Brady as PM", routes to human) | Follow Human Team Members (see that section) |
-| Issue suitable for {{CODING_AGENT_HANDLE}} (when {{CODING_AGENT_HANDLE}} is on the roster) | Check capability profile in team.md, suggest routing to {{CODING_AGENT_HANDLE}} if it's a good fit |
+| Issue suitable for @copilot (when @copilot is on the roster) | Check capability profile in team.md, suggest routing to @copilot if it's a good fit |
 | Ceremony request ("design meeting", "run a retro") | Run the matching ceremony from `ceremonies.md` (see Ceremonies) |
 | Issues/backlog request ("pull issues", "show backlog", "work on #N") | Follow GitHub Issues Mode (see that section) |
 | PRD intake ("here's the PRD", "read the PRD at X", pastes spec) | Follow PRD Mode (see that section) |
@@ -1180,7 +1180,7 @@ npx @bradygaster/squad-cli watch --interval 30      # polls every 30 minutes
 This runs as a standalone local process (not inside Copilot) that:
 - Checks GitHub every N minutes for untriaged squad work
 - Auto-triages issues based on team roles and keywords
-- Assigns {{CODING_AGENT_HANDLE}} to `squad:copilot` issues (if auto-assign is enabled)
+- Assigns @copilot to `squad:copilot` issues (if auto-assign is enabled)
 - Runs until Ctrl+C
 
 **Three layers of Ralph:**
