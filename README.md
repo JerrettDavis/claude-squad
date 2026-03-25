@@ -103,6 +103,8 @@ This fork uses `main` as the default branch and publishes under the `@jerrettdav
 
 ### Install from registry
 
+#### npmjs (if published)
+
 ```bash
 # CLI
 npm install -g @jerrettdavis/squad-cli
@@ -110,6 +112,32 @@ npm install -g @jerrettdavis/squad-cli
 # SDK
 npm install @jerrettdavis/squad-sdk
 ```
+
+#### GitHub Packages (fallback when npmjs is not published yet)
+
+1) Create an npm auth token with `read:packages` scope.
+
+2) Add an `.npmrc` entry (user-level or project-level):
+
+```ini
+@jerrettdavis:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=${GITHUB_PACKAGES_TOKEN}
+```
+
+3) Export token and install:
+
+```bash
+# PowerShell
+$env:GITHUB_PACKAGES_TOKEN = "<github_pat_with_read_packages>"
+
+# CLI (global)
+npm install -g @jerrettdavis/squad-cli --registry=https://npm.pkg.github.com
+
+# SDK (project)
+npm install @jerrettdavis/squad-sdk --registry=https://npm.pkg.github.com
+```
+
+> Note: GitHub Packages installs use the same package names (`@jerrettdavis/*`) but resolve from `npm.pkg.github.com`.
 
 ### Publish packages from GitHub Actions
 
