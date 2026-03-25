@@ -1,11 +1,13 @@
-const { describe, it, beforeEach, afterEach } = require('node:test');
-const assert = require('node:assert/strict');
-const fs = require('fs');
-const path = require('path');
-const { execFileSync } = require('child_process');
-const os = require('os');
+import { describe, it, beforeEach, afterEach } from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'fs';
+import path from 'path';
+import { execFileSync } from 'child_process';
+import os from 'os';
+import { fileURLToPath } from 'url';
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const CLI = path.join(__dirname, '..', 'index.js');
+const CLI = path.join(__dirname, '..', 'index.cjs');
 const TEMPLATES_DIR = path.join(__dirname, '..', 'templates', 'workflows');
 
 // The three CI/CD workflows Kobayashi is building
