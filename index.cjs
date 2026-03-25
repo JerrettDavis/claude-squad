@@ -3,7 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const { calculatePrRework, calculateReworkSummary } = require('./lib/rework');
+const { calculatePrRework, calculateReworkSummary } = require('./lib/rework.cjs');
 
 const GREEN = '\x1b[32m';
 const RED = '\x1b[31m';
@@ -583,6 +583,13 @@ const PROJECT_TYPE_SENSITIVE_WORKFLOWS = new Set([
   'squad-docs.yml',
 ]);
 
+// CI/CD workflows installed only on upgrade (not on fresh init)
+const CICD_ONLY_WORKFLOWS = new Set([
+  'squad-ci.yml',
+  'squad-release.yml',
+  'squad-preview.yml',
+]);
+
 // Generate a stub workflow for non-npm projects so no broken npm commands run
 function generateProjectWorkflowStub(workflowFile, projectType) {
   const typeLabel = projectType === 'unknown'
@@ -1011,10 +1018,11 @@ if (cmd === 'plugin') {
 
 // --- Export subcommand ---
 if (cmd === 'export') {
-  const teamMd = path.join(dest, '.ai-team', 'team.md');
-  if (!fs.existsSync(teamMd)) {
+  const exportSquadDirInfo = detectSquadDir(dest);
+  if (!fs.existsSync(exportSquadDirInfo.path)) {
     fatal('No squad found — run init first');
   }
+  const exportSquadDir = exportSquadDirInfo.path;
 
   const manifest = {
     version: '1.0',
@@ -1026,7 +1034,7 @@ if (cmd === 'export') {
   };
 
   // Read casting state
-  const castingDir = path.join(dest, '.ai-team', 'casting');
+  const castingDir = path.join(exportSquadDir, 'casting');
   for (const file of ['registry.json', 'policy.json', 'history.json']) {
     const filePath = path.join(castingDir, file);
     try {
@@ -1039,7 +1047,7 @@ if (cmd === 'export') {
   }
 
   // Read agents
-  const agentsDir = path.join(dest, '.ai-team', 'agents');
+  const agentsDir = path.join(exportSquadDir, 'agents');
   try {
     if (fs.existsSync(agentsDir)) {
       for (const entry of fs.readdirSync(agentsDir)) {
@@ -1058,7 +1066,7 @@ if (cmd === 'export') {
   }
 
   // Read skills
-  const skillsDir = path.join(dest, '.ai-team', 'skills');
+  const skillsDir = path.join(exportSquadDir, 'skills');
   try {
     if (fs.existsSync(skillsDir)) {
       for (const entry of fs.readdirSync(skillsDir)) {
@@ -1122,34 +1130,36 @@ if (cmd === 'import') {
     fatal('Invalid export file: missing or invalid "skills" field');
   }
 
-  const aiTeamDir = path.join(dest, '.ai-team');
+  const importSquadDirInfo = detectSquadDir(dest);
+  const importSquadDir = importSquadDirInfo.path || path.join(dest, '.squad');
   const hasForce = process.argv.includes('--force');
 
   // Collision detection
-  if (fs.existsSync(aiTeamDir)) {
+  if (fs.existsSync(importSquadDir)) {
     if (!hasForce) {
       fatal('A squad already exists here. Use --force to replace (current squad will be archived).');
     }
     // Archive existing squad
     const ts = new Date().toISOString().replace(/:/g, '-').replace(/\./g, '-');
-    const archiveDir = path.join(dest, `.ai-team-archive-${ts}`);
-    fs.renameSync(aiTeamDir, archiveDir);
+    const archiveName = path.basename(importSquadDir) + `-archive-${ts}`;
+    const archiveDir = path.join(dest, archiveName);
+    fs.renameSync(importSquadDir, archiveDir);
   }
 
   // Create directory structure
-  fs.mkdirSync(path.join(aiTeamDir, 'casting'), { recursive: true });
-  fs.mkdirSync(path.join(aiTeamDir, 'decisions', 'inbox'), { recursive: true });
-  fs.mkdirSync(path.join(aiTeamDir, 'orchestration-log'), { recursive: true });
-  fs.mkdirSync(path.join(aiTeamDir, 'log'), { recursive: true });
-  fs.mkdirSync(path.join(aiTeamDir, 'skills'), { recursive: true });
+  fs.mkdirSync(path.join(importSquadDir, 'casting'), { recursive: true });
+  fs.mkdirSync(path.join(importSquadDir, 'decisions', 'inbox'), { recursive: true });
+  fs.mkdirSync(path.join(importSquadDir, 'orchestration-log'), { recursive: true });
+  fs.mkdirSync(path.join(importSquadDir, 'log'), { recursive: true });
+  fs.mkdirSync(path.join(importSquadDir, 'skills'), { recursive: true });
 
   // Write empty project-specific files
-  fs.writeFileSync(path.join(aiTeamDir, 'decisions.md'), '');
-  fs.writeFileSync(path.join(aiTeamDir, 'team.md'), '');
+  fs.writeFileSync(path.join(importSquadDir, 'decisions.md'), '');
+  fs.writeFileSync(path.join(importSquadDir, 'team.md'), '');
 
   // Write casting state
   for (const [key, value] of Object.entries(manifest.casting)) {
-    fs.writeFileSync(path.join(aiTeamDir, 'casting', `${key}.json`), JSON.stringify(value, null, 2) + '\n');
+    fs.writeFileSync(path.join(importSquadDir, 'casting', `${key}.json`), JSON.stringify(value, null, 2) + '\n');
   }
 
   // Determine source project name from filename
@@ -1160,7 +1170,7 @@ if (cmd === 'import') {
   const agentNames = Object.keys(manifest.agents);
   for (const name of agentNames) {
     const agent = manifest.agents[name];
-    const agentDir = path.join(aiTeamDir, 'agents', name);
+    const agentDir = path.join(importSquadDir, 'agents', name);
     fs.mkdirSync(agentDir, { recursive: true });
 
     if (agent.charter) {
@@ -1180,7 +1190,7 @@ if (cmd === 'import') {
   for (const skillContent of manifest.skills) {
     const nameMatch = skillContent.match(/^name:\s*["']?(.+?)["']?\s*$/m);
     const skillName = nameMatch ? nameMatch[1].trim().toLowerCase().replace(/\s+/g, '-') : `skill-${manifest.skills.indexOf(skillContent)}`;
-    const skillDir = path.join(aiTeamDir, 'skills', skillName);
+    const skillDir = path.join(importSquadDir, 'skills', skillName);
     fs.mkdirSync(skillDir, { recursive: true });
     fs.writeFileSync(path.join(skillDir, 'SKILL.md'), skillContent);
   }
@@ -1835,6 +1845,9 @@ if (fs.existsSync(workflowsSrc) && fs.statSync(workflowsSrc).isDirectory()) {
     fs.mkdirSync(workflowsDest, { recursive: true });
     let copied = 0;
     for (const file of workflowFiles) {
+      // CI/CD workflows are skipped during init for npm and unknown project types;
+      // non-npm typed projects (e.g. dotnet) get a stub version immediately.
+      if (CICD_ONLY_WORKFLOWS.has(file) && (projectType === 'npm' || projectType === 'unknown')) continue;
       const destFile = path.join(workflowsDest, file);
       if (fs.existsSync(destFile)) {
         console.log(`${DIM}${file} already exists — skipping (run 'upgrade' to update)${RESET}`);

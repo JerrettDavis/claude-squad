@@ -1,12 +1,16 @@
-const { describe, it } = require('node:test');
-const assert = require('node:assert/strict');
-const path = require('path');
-const { execFileSync } = require('child_process');
+import { describe, it } from 'node:test';
+import assert from 'node:assert/strict';
+import path from 'path';
+import { execFileSync } from 'child_process';
+import { fileURLToPath } from 'url';
+import { createRequire } from 'module';
 
-const CLI = path.join(__dirname, '..', 'index.js');
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const CLI = path.join(__dirname, '..', 'index.cjs');
 
 // Import rework calculation functions from the pure module (no CLI side effects)
-const { calculatePrRework, calculateReworkSummary } = require(path.join(__dirname, '..', 'lib', 'rework.js'));
+const _require = createRequire(import.meta.url);
+const { calculatePrRework, calculateReworkSummary } = _require('../lib/rework.cjs');
 
 describe('calculatePrRework', () => {
   it('should return zero rework for PR with no reviews', () => {
