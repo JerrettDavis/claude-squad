@@ -1,0 +1,68 @@
+# AgentHub (Self-Hosted Orchestration Workflow)
+
+This branch introduces an **AgentHub MVP**: a lightweight, self-hosted orchestration service so Squad can operate without GitHub as the coordination backend.
+
+## Goals
+
+- Run locally via npm (`npm run agenthub:serve`)
+- Run remotely (VM, bare metal, container)
+- Provide a stable API surface for squad orchestration
+- Support a dedicated pipe/parameter contract for routing work to AgentHub
+
+## Start AgentHub locally
+
+```bash
+npm run agenthub:serve
+```
+
+Optional env vars:
+
+- `AGENTHUB_HOST` (default `0.0.0.0`)
+- `AGENTHUB_PORT` (default `8787`)
+
+## API (MVP)
+
+- `GET /healthz`
+- `POST /v1/jobs`
+- `GET /v1/jobs`
+- `GET /v1/jobs/:id`
+- `POST /v1/jobs/:id/cancel`
+
+### Create job request
+
+```json
+{
+  "pipe": "agenthub",
+  "prompt": "Build feature X",
+  "parameters": {
+    "orchestrator": "agenthub",
+    "agenthubUrl": "http://localhost:8787"
+  },
+  "meta": {
+    "team": "default"
+  }
+}
+```
+
+## Proposed Squad runtime contract
+
+To route work through self-hosted AgentHub, we standardize:
+
+- **Pipe:** `agenthub`
+- **Parameters:**
+  - `orchestrator=agenthub`
+  - `agenthubUrl=<base-url>`
+
+## Docker example
+
+```bash
+docker run --rm -p 8787:8787 -e AGENTHUB_PORT=8787 -v ${PWD}:/app -w /app node:22 bash -lc "npm ci && npm run agenthub:serve"
+```
+
+## Next implementation steps
+
+1. Wire Squad CLI command path to submit jobs to AgentHub when `--orchestrator agenthub` is provided.
+2. Add `agenthub` config block in squad config schema (`url`, `auth`, `defaultPipe`).
+3. Add remote executor mode (webhook or stream callback) for long-running agent runs.
+4. Add auth layer (token or mTLS) for remote deployments.
+5. Add persistence backend (sqlite/postgres) instead of in-memory queue.

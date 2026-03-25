@@ -97,6 +97,20 @@ Squad supports both runtime providers as first-class paths:
 Provider-specific flags, compatibility behavior, token mappings, and troubleshooting are documented in:
 - [`docs/runtime-providers.md`](docs/runtime-providers.md)
 
+## AgentHub (self-hosted orchestration, no GitHub required)
+
+For local/remote orchestration without GitHub as the backend, this repo now includes an AgentHub MVP server.
+
+```bash
+npm run agenthub:serve
+```
+
+See [`AGENTHUB.md`](AGENTHUB.md) for:
+- API endpoints
+- local + Docker run modes
+- proposed `pipe=agenthub` + `orchestrator=agenthub` parameter contract
+- next steps for CLI/runtime wiring
+
 ## Fork main branch (JerrettDavis) — install, publish, and run
 
 This fork uses `main` as the default branch and publishes under the `@jerrettdavis/*` scope.
