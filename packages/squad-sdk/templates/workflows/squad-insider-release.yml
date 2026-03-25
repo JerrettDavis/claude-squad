@@ -50,7 +50,7 @@ jobs:
         run: |
           gh release create "${{ steps.version.outputs.insider_tag }}" \
             --title "${{ steps.version.outputs.insider_tag }}" \
-            --notes "This is an insider/development build of Squad. Install with:\`\`\`bash\nnpm install -g @bradygaster/squad-cli@${{ steps.version.outputs.insider_tag }}\n\`\`\`\n\n**Note:** Insider builds may be unstable and are intended for early adopters and testing only." \
+            --notes "This is an insider/development build of Squad. Install with:\`\`\`bash\nnpm install -g @jerrettdavis/squad-cli@${{ steps.version.outputs.insider_tag }}\n\`\`\`\n\n**Note:** Insider builds may be unstable and are intended for early adopters and testing only." \
             --prerelease
 
       - name: Verify release
@@ -59,3 +59,4 @@ jobs:
         run: |
           gh release view "${{ steps.version.outputs.insider_tag }}"
           echo "✅ Insider Release ${{ steps.version.outputs.insider_tag }} created and verified."
+

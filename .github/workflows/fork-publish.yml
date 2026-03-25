@@ -48,12 +48,17 @@ jobs:
           for (const f of files) {
             const j = JSON.parse(fs.readFileSync(f, 'utf8'));
             if (j.name) j.name = j.name.replace(/^@[^/]+\//, `@${scope}/`);
-            if (j.homepage) j.homepage = j.homepage.replace('github.com/bradygaster/squad', 'github.com/JerrettDavis/claude-squad');
-            if (j.bugs?.url) j.bugs.url = j.bugs.url.replace('github.com/bradygaster/squad', 'github.com/JerrettDavis/claude-squad');
-            if (j.repository?.url) j.repository.url = j.repository.url.replace('github.com/bradygaster/squad', 'github.com/JerrettDavis/claude-squad');
-            if (j.dependencies && j.dependencies['@bradygaster/squad-sdk']) {
-              j.dependencies[`@${scope}/squad-sdk`] = j.dependencies['@bradygaster/squad-sdk'];
-              delete j.dependencies['@bradygaster/squad-sdk'];
+            const repoSlug = process.env.GITHUB_REPOSITORY || 'JerrettDavis/claude-squad';
+            const repoUrl = `github.com/${repoSlug}`;
+            if (j.homepage) j.homepage = j.homepage.replace(/github\.com\/[^/]+\/(squad|claude-squad)/, repoUrl);
+            if (j.bugs?.url) j.bugs.url = j.bugs.url.replace(/github\.com\/[^/]+\/(squad|claude-squad)/, repoUrl);
+            if (j.repository?.url) j.repository.url = j.repository.url.replace(/github\.com\/[^/]+\/(squad|claude-squad)/, repoUrl);
+            if (j.dependencies) {
+              const sdkKey = Object.keys(j.dependencies).find(k => /\/squad-sdk$/.test(k));
+              if (sdkKey) {
+                j.dependencies[`@${scope}/squad-sdk`] = j.dependencies[sdkKey];
+                if (sdkKey !== `@${scope}/squad-sdk`) delete j.dependencies[sdkKey];
+              }
             }
             fs.writeFileSync(f, JSON.stringify(j, null, 2) + '\n');
           }
@@ -108,9 +113,12 @@ jobs:
           for (const f of files) {
             const j = JSON.parse(fs.readFileSync(f, 'utf8'));
             if (j.name) j.name = j.name.replace(/^@[^/]+\//, `@${scope}/`);
-            if (j.dependencies && j.dependencies['@bradygaster/squad-sdk']) {
-              j.dependencies[`@${scope}/squad-sdk`] = j.dependencies['@bradygaster/squad-sdk'];
-              delete j.dependencies['@bradygaster/squad-sdk'];
+            if (j.dependencies) {
+              const sdkKey = Object.keys(j.dependencies).find(k => /\/squad-sdk$/.test(k));
+              if (sdkKey) {
+                j.dependencies[`@${scope}/squad-sdk`] = j.dependencies[sdkKey];
+                if (sdkKey !== `@${scope}/squad-sdk`) delete j.dependencies[sdkKey];
+              }
             }
             fs.writeFileSync(f, JSON.stringify(j, null, 2) + '\n');
           }

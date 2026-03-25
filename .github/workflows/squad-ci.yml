@@ -45,7 +45,7 @@ jobs:
             const lock = JSON.parse(fs.readFileSync('package-lock.json', 'utf8'));
             const pkgs = lock.packages || {};
             const stale = Object.keys(pkgs).filter(k =>
-              k.includes('/node_modules/@bradygaster/squad-') &&
+              k.includes('/node_modules/@jerrettdavis/squad-') &&
               pkgs[k].resolved && pkgs[k].resolved.startsWith('https://')
             );
             if (stale.length) {
@@ -93,7 +93,8 @@ jobs:
           if [ "$VIOLATIONS" -eq 1 ]; then
             echo ""
             echo "::error::PUBLISH POLICY VIOLATION — all npm publish commands must be workspace-scoped (-w or --workspace)"
-            echo "See: https://github.com/bradygaster/squad/issues/557"
+            echo "See: https://github.com/JerrettDavis/claude-squad/issues/557"
             exit 1
           fi
           echo "✅ All npm publish commands are workspace-scoped"
+
