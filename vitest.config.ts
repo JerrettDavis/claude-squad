@@ -9,7 +9,7 @@ export default defineConfig({
     dedupe: ['@bradygaster/squad-sdk'],
   },
   test: {
-    include: ['test/**/*.test.ts'],
+    include: ['test/**/*.test.ts', 'packages/*/tests/**/*.test.ts'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'text-summary', 'html'],

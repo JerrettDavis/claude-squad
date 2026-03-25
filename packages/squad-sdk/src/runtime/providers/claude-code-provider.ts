@@ -8,6 +8,7 @@
 
 import { spawn, type ChildProcess } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
+import { accessSync, constants as fsConstants } from 'node:fs';
 import { createInterface } from 'node:readline';
 import type {
   RuntimeProvider,
@@ -18,24 +19,56 @@ import type {
   RuntimeStartOptions,
 } from '../provider.js';
 
+/** Maximum line length (bytes) accepted from claude stdout. Lines longer than
+ *  this are dropped to protect against memory exhaustion from binary noise. */
+const MAX_LINE_LENGTH = 1_048_576; // 1 MiB
+
+/** Default session-idle timeout in milliseconds (30 minutes). */
+const DEFAULT_SESSION_TIMEOUT_MS = 30 * 60 * 1000;
+
 interface ClaudeSession {
   id: string;
   process: ChildProcess;
   model?: string;
   handlers: Set<(event: RuntimeProviderEvent) => void>;
   started: boolean;
+  /** True once shutdownSession has been called for this session. */
+  shuttingDown: boolean;
+  /** Idle-timeout handle — reset each time an event is received. */
+  timeoutHandle: ReturnType<typeof setTimeout> | null;
 }
 
 export class ClaudeCodeRuntimeProvider implements RuntimeProvider {
   readonly name: RuntimeProviderName = 'claude-code';
   private sessions = new Map<string, ClaudeSession>();
   private claudeBin: string;
+  private sessionTimeoutMs: number;
 
-  constructor(options?: { claudeBin?: string }) {
+  constructor(options?: { claudeBin?: string; sessionTimeout?: number }) {
     this.claudeBin = options?.claudeBin ?? 'claude';
+    this.sessionTimeoutMs = options?.sessionTimeout ?? DEFAULT_SESSION_TIMEOUT_MS;
+  }
+
+  /**
+   * Verify that the claude binary exists and is executable before trying to
+   * spawn it.  Throws immediately with a clear message when it is missing or
+   * not executable so callers don't have to wait for a process-spawn timeout.
+   */
+  private assertBinaryAccessible(): void {
+    try {
+      accessSync(this.claudeBin, fsConstants.X_OK);
+    } catch {
+      throw new Error(
+        `Claude binary not found or not executable: "${this.claudeBin}". ` +
+          'Install the Claude CLI and make sure it is on your PATH.',
+      );
+    }
   }
 
   async startSession(options?: RuntimeStartOptions): Promise<RuntimeProviderSession> {
+    // Fail fast if the binary isn't usable — avoids silent 2-second timeouts.
+    this.assertBinaryAccessible();
+
     const sessionId = options?.sessionId ?? randomUUID();
 
     const args = ['--json', '--verbose'];
@@ -54,9 +87,14 @@ export class ClaudeCodeRuntimeProvider implements RuntimeProvider {
       model: options?.model,
       handlers: new Set(),
       started: false,
+      shuttingDown: false,
+      timeoutHandle: null,
     };
 
     this.sessions.set(sessionId, session);
+
+    // Start the idle-timeout watchdog.
+    this.resetSessionTimeout(session);
 
     // Wire up stdout JSON line parsing
     if (proc.stdout) {
@@ -128,6 +166,15 @@ export class ClaudeCodeRuntimeProvider implements RuntimeProvider {
   async sendMessage(sessionId: string, message: RuntimeMessage): Promise<void> {
     const session = this.getSession(sessionId);
 
+    // Detect subprocess that has already exited but whose session entry
+    // hasn't been cleaned up yet (e.g. between 'exit' emission and handler).
+    if (session.process.exitCode !== null || session.process.killed) {
+      throw new Error(
+        `Session ${sessionId} subprocess has already exited (exitCode=${session.process.exitCode}). ` +
+          'Call startSession to create a new session.',
+      );
+    }
+
     if (!session.process.stdin?.writable) {
       throw new Error(`Session ${sessionId} stdin is not writable`);
     }
@@ -155,7 +202,16 @@ export class ClaudeCodeRuntimeProvider implements RuntimeProvider {
 
   async shutdownSession(sessionId: string): Promise<void> {
     const session = this.sessions.get(sessionId);
+    // No-op if session doesn't exist or is already being shut down.
     if (!session) return;
+    if (session.shuttingDown) return;
+    session.shuttingDown = true;
+
+    // Cancel the idle-timeout watchdog.
+    if (session.timeoutHandle !== null) {
+      clearTimeout(session.timeoutHandle);
+      session.timeoutHandle = null;
+    }
 
     // Try graceful shutdown first
     if (session.process.stdin?.writable) {
@@ -213,6 +269,13 @@ export class ClaudeCodeRuntimeProvider implements RuntimeProvider {
   private emit(sessionId: string, event: RuntimeProviderEvent): void {
     const session = this.sessions.get(sessionId);
     if (!session) return;
+
+    // Activity received — reset the idle-timeout watchdog (skip for the
+    // synthetic timeout-error event itself to avoid an infinite loop).
+    if (event.type !== 'error' || (event.payload as Record<string, unknown> | undefined)?.['_timeout'] !== true) {
+      this.resetSessionTimeout(session);
+    }
+
     for (const handler of session.handlers) {
       try {
         handler(event);
@@ -222,18 +285,69 @@ export class ClaudeCodeRuntimeProvider implements RuntimeProvider {
     }
   }
 
+  /**
+   * (Re-)arm the idle-timeout watchdog for a session.  Called when the
+   * session is created and after every received event.
+   */
+  private resetSessionTimeout(session: ClaudeSession): void {
+    // Don't re-arm if shutdown is already in progress.
+    if (session.shuttingDown) return;
+
+    if (session.timeoutHandle !== null) {
+      clearTimeout(session.timeoutHandle);
+    }
+
+    session.timeoutHandle = setTimeout(() => {
+      // Emit the timeout error, then tear the session down.
+      this.emit(session.id, {
+        type: 'error',
+        sessionId: session.id,
+        timestamp: Date.now(),
+        payload: {
+          _timeout: true,
+          message: `Session ${session.id} timed out after ${this.sessionTimeoutMs}ms of inactivity and has been shut down.`,
+        },
+      });
+      void this.shutdownSession(session.id);
+    }, this.sessionTimeoutMs);
+
+    // Allow the Node.js process to exit even if the timer is still running.
+    if (typeof session.timeoutHandle === 'object' && session.timeoutHandle !== null) {
+      (session.timeoutHandle as ReturnType<typeof setTimeout> & { unref?: () => void }).unref?.();
+    }
+  }
+
   private handleOutputLine(sessionId: string, line: string): void {
-    const trimmed = line.trim();
+    // Guard: drop lines that are suspiciously long (binary noise / memory risk).
+    if (line.length > MAX_LINE_LENGTH) {
+      // Emit a non-fatal warning and skip.
+      this.emit(sessionId, {
+        type: 'error',
+        sessionId,
+        timestamp: Date.now(),
+        payload: { message: `Dropped oversized output line (${line.length} bytes) from session ${sessionId}.` },
+      });
+      return;
+    }
+
+    // Guard: strip non-printable / non-UTF-8 garbage so JSON.parse doesn't
+    // receive invalid unicode sequences that could cause internal errors in
+    // some runtimes.  We replace lone surrogates and C0/C1 control chars
+    // (except the common whitespace ones) with the replacement character.
+    // eslint-disable-next-line no-control-regex
+    const sanitized = line.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '\uFFFD');
+
+    const trimmed = sanitized.trim();
     if (!trimmed) return;
 
     try {
-      const data = JSON.parse(trimmed);
+      const data = JSON.parse(trimmed) as Record<string, unknown>;
       const event = this.mapClaudeEvent(sessionId, data);
       if (event) {
         this.emit(sessionId, event);
       }
     } catch {
-      // Non-JSON output — treat as message delta
+      // Non-JSON or partial-JSON output — treat as a plain-text message delta.
       this.emit(sessionId, {
         type: 'message.delta',
         sessionId,

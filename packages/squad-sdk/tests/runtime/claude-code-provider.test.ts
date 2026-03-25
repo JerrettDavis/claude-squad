@@ -2,38 +2,65 @@
  * Smoke tests for ClaudeCodeRuntimeProvider
  *
  * Tests the provider lifecycle: start → send → events → shutdown.
- * Uses a mock claude binary (simple echo script) to avoid requiring
+ * Uses a mock claude binary (simple Node.js script) to avoid requiring
  * actual Claude CLI installation in CI.
+ *
+ * NOTE: The mock binary is a Node.js script invoked via its shebang on
+ * POSIX systems.  On Windows the tests that require a live subprocess are
+ * skipped automatically because child_process.spawn cannot execute scripts
+ * without shell:true; the CI target (Linux) runs all tests.
  */
 
 import { describe, it, expect, beforeAll, afterAll, afterEach } from 'vitest';
 import { writeFileSync, chmodSync, mkdtempSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import { ClaudeCodeRuntimeProvider } from '../src/runtime/providers/claude-code-provider.js';
-import type { RuntimeProviderEvent } from '../src/runtime/provider.js';
+import { ClaudeCodeRuntimeProvider } from '../../src/runtime/providers/claude-code-provider.js';
+import type { RuntimeProviderEvent } from '../../src/runtime/provider.js';
+
+const IS_WINDOWS = process.platform === 'win32';
+
+/**
+ * Create a cross-platform mock "claude" binary.
+ *
+ * On POSIX: writes a Node.js script with a `#!/usr/bin/env node` shebang
+ * and makes it executable so `spawn(path, args)` works out of the box.
+ *
+ * On Windows: writes only the .js file (for documentation / type-checking)
+ * and returns a special sentinel path — callers must skip live-subprocess
+ * tests when IS_WINDOWS is true.
+ */
+function createMockClaude(dir: string): string {
+  const script = [
+    '#!/usr/bin/env node',
+    // Emit one JSON line immediately so startSession() resolves.
+    "process.stdout.write(JSON.stringify({type:'session_start',session_id:'test-123'})+'\\n');",
+    'process.stdin.setEncoding("utf8");',
+    'let buf="";',
+    'process.stdin.on("data",(c)=>{',
+    '  buf+=c;',
+    '  let nl;',
+    '  while((nl=buf.indexOf("\\n"))!==-1){',
+    '    const line=buf.slice(0,nl).trim();',
+    '    buf=buf.slice(nl+1);',
+    '    if(line) process.stdout.write(JSON.stringify({type:"message",content:"echo: "+line})+"\\n");',
+    '  }',
+    '});',
+    'process.stdin.on("end",()=>process.exit(0));',
+  ].join('\n');
+
+  const scriptPath = join(dir, 'claude');
+  writeFileSync(scriptPath, script, { mode: 0o755 });
+  if (!IS_WINDOWS) chmodSync(scriptPath, 0o755);
+  return scriptPath;
+}
 
 let mockBinDir: string;
 let mockClaudePath: string;
 
 beforeAll(() => {
-  // Create a mock claude binary that echoes JSON events
   mockBinDir = mkdtempSync(join(tmpdir(), 'claude-mock-'));
-  mockClaudePath = join(mockBinDir, 'claude');
-
-  const mockScript = `#!/bin/bash
-# Mock claude binary for testing
-# Outputs a session.started event, then echoes stdin back as message events
-echo '{"type":"session_start","session_id":"test-123"}'
-
-while IFS= read -r line; do
-  if [ -z "$line" ]; then continue; fi
-  echo "{\\"type\\":\\"message\\",\\"content\\":\\"echo: $line\\"}"
-done
-`;
-
-  writeFileSync(mockClaudePath, mockScript, { mode: 0o755 });
-  chmodSync(mockClaudePath, 0o755);
+  mockClaudePath = createMockClaude(mockBinDir);
 });
 
 afterAll(() => {
@@ -63,7 +90,7 @@ describe('ClaudeCodeRuntimeProvider', () => {
     expect(models.length).toBeGreaterThan(0);
   });
 
-  it('should start a session and receive session.started event', async () => {
+  it.skipIf(IS_WINDOWS)('should start a session and receive session.started event', async () => {
     const events: RuntimeProviderEvent[] = [];
 
     const session = await provider.startSession({
@@ -88,7 +115,7 @@ describe('ClaudeCodeRuntimeProvider', () => {
     await provider.shutdownSession(session.id);
   });
 
-  it('should send a message and receive events', async () => {
+  it.skipIf(IS_WINDOWS)('should send a message and receive events', async () => {
     const events: RuntimeProviderEvent[] = [];
 
     const session = await provider.startSession({
@@ -116,7 +143,7 @@ describe('ClaudeCodeRuntimeProvider', () => {
     await provider.shutdownSession(session.id);
   });
 
-  it('should shutdown session cleanly', async () => {
+  it.skipIf(IS_WINDOWS)('should shutdown session cleanly', async () => {
     const events: RuntimeProviderEvent[] = [];
 
     const session = await provider.startSession({
@@ -135,7 +162,7 @@ describe('ClaudeCodeRuntimeProvider', () => {
     ).rejects.toThrow();
   });
 
-  it('should handle multiple concurrent sessions', async () => {
+  it.skipIf(IS_WINDOWS)('should handle multiple concurrent sessions', async () => {
     const session1 = await provider.startSession({
       workingDirectory: mockBinDir,
     });
@@ -149,7 +176,7 @@ describe('ClaudeCodeRuntimeProvider', () => {
     await provider.shutdownSession(session2.id);
   });
 
-  it('should unsubscribe event handler correctly', async () => {
+  it.skipIf(IS_WINDOWS)('should unsubscribe event handler correctly', async () => {
     const events: RuntimeProviderEvent[] = [];
 
     const session = await provider.startSession({
@@ -175,5 +202,134 @@ describe('ClaudeCodeRuntimeProvider', () => {
     expect(postUnsub.length).toBe(0);
 
     await provider.shutdownSession(session.id);
+  });
+});
+
+// ── Edge-case hardening tests ─────────────────────────────────────────────────
+
+describe('ClaudeCodeRuntimeProvider — edge cases', () => {
+  let edgeBinDir: string;
+  let edgeClaudePath: string;
+
+  beforeAll(() => {
+    edgeBinDir = mkdtempSync(join(tmpdir(), 'claude-edge-'));
+    edgeClaudePath = createMockClaude(edgeBinDir);
+  });
+
+  afterAll(() => {
+    rmSync(edgeBinDir, { recursive: true, force: true });
+  });
+
+  // ── a. Malformed output lines ──────────────────────────────────────────────
+
+  it.skipIf(IS_WINDOWS)('should not crash when handleOutputLine receives malformed JSON', async () => {
+    const provider = new ClaudeCodeRuntimeProvider({ claudeBin: edgeClaudePath });
+    const session = await provider.startSession({ workingDirectory: edgeBinDir });
+
+    const events: RuntimeProviderEvent[] = [];
+    await provider.onEvent(session.id, (e) => events.push(e));
+
+    // Access private method via bracket notation for white-box testing.
+    const p = provider as unknown as Record<string, (id: string, line: string) => void>;
+
+    // Partial JSON — should not throw, should emit a message.delta
+    expect(() => p['handleOutputLine'](session.id, '{"type": "incomplete"')).not.toThrow();
+
+    // Pure binary garbage — should not throw
+    expect(() => p['handleOutputLine'](session.id, '\x00\x01\x02\x03')).not.toThrow();
+
+    // Extremely long line (> 1 MiB) — should not throw, should emit error event
+    const hugeLine = 'x'.repeat(1_100_000);
+    expect(() => p['handleOutputLine'](session.id, hugeLine)).not.toThrow();
+
+    // At least one error event should have been emitted for the oversized line.
+    const errorEvents = events.filter((e) => e.type === 'error');
+    expect(errorEvents.length).toBeGreaterThan(0);
+
+    await provider.shutdownSession(session.id);
+  });
+
+  // ── b. Double shutdown ─────────────────────────────────────────────────────
+
+  it.skipIf(IS_WINDOWS)('should be safe to call shutdownSession twice on the same session', async () => {
+    const provider = new ClaudeCodeRuntimeProvider({ claudeBin: edgeClaudePath });
+    const session = await provider.startSession({ workingDirectory: edgeBinDir });
+
+    // First shutdown — normal.
+    await expect(provider.shutdownSession(session.id)).resolves.toBeUndefined();
+
+    // Second shutdown — must be a no-op, not throw.
+    await expect(provider.shutdownSession(session.id)).resolves.toBeUndefined();
+  });
+
+  // ── c. Send to dead session / dead process ─────────────────────────────────
+
+  it.skipIf(IS_WINDOWS)('should throw a clear error when sending to a session whose process has exited', async () => {
+    const provider = new ClaudeCodeRuntimeProvider({ claudeBin: edgeClaudePath });
+    const session = await provider.startSession({ workingDirectory: edgeBinDir });
+
+    // Force-kill the subprocess without going through shutdownSession so the
+    // session map entry remains, simulating a crashed process.
+    const proc = (
+      provider as unknown as Record<string, Map<string, { process: import('node:child_process').ChildProcess }>>
+    )['sessions'].get(session.id)!.process;
+
+    proc.kill('SIGKILL');
+
+    // Wait for the OS to mark the process as exited.
+    await new Promise<void>((resolve) => {
+      if (proc.exitCode !== null) { resolve(); return; }
+      proc.once('exit', () => resolve());
+    });
+
+    // The session map entry is removed by the 'exit' handler — sending should
+    // now throw (either "No active session" or the dead-process error).
+    await expect(
+      provider.sendMessage(session.id, { role: 'user', content: 'hello' }),
+    ).rejects.toThrow();
+  });
+
+  // ── d. Missing binary throws immediately ──────────────────────────────────
+
+  it('should throw immediately when the claude binary does not exist', async () => {
+    const provider = new ClaudeCodeRuntimeProvider({
+      claudeBin: '/nonexistent/path/to/claude-that-does-not-exist',
+    });
+
+    await expect(provider.startSession()).rejects.toThrow(
+      /Claude binary not found or not executable/,
+    );
+  });
+
+  // ── e. Session timeout fires and auto-shuts down ──────────────────────────
+
+  it.skipIf(IS_WINDOWS)('should auto-shutdown and emit an error when session idle timeout fires', async () => {
+    // Use a very short timeout (100 ms) so the test completes quickly.
+    const provider = new ClaudeCodeRuntimeProvider({
+      claudeBin: edgeClaudePath,
+      sessionTimeout: 100,
+    });
+
+    const session = await provider.startSession({ workingDirectory: edgeBinDir });
+
+    const events: RuntimeProviderEvent[] = [];
+    await provider.onEvent(session.id, (e) => events.push(e));
+
+    // Wait long enough for the watchdog to fire.
+    await new Promise((r) => setTimeout(r, 600));
+
+    // An error event with the timeout message must have been emitted.
+    const timeoutErrors = events.filter(
+      (e) =>
+        e.type === 'error' &&
+        typeof (e.payload as Record<string, unknown> | undefined)?.['message'] === 'string' &&
+        ((e.payload as Record<string, unknown>)['message'] as string).includes('timed out'),
+    );
+    expect(timeoutErrors.length).toBeGreaterThan(0);
+
+    // Session should have been removed from the provider.
+    await expect(
+      provider.sendMessage(session.id, { role: 'user', content: 'test' }),
+    ).rejects.toThrow();
   });
 });
