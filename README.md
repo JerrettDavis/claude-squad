@@ -33,7 +33,7 @@ git init
 ### 2. Install Squad
 
 ```bash
-npm install -g @bradygaster/squad-cli
+npm install -g @jerrettdavis/squad-cli
 squad init
 ```
 
@@ -84,6 +84,50 @@ Squad supports both runtime providers as first-class paths:
 Provider-specific flags, compatibility behavior, token mappings, and troubleshooting are documented in:
 - [`docs/runtime-providers.md`](docs/runtime-providers.md)
 
+## Fork main branch (JerrettDavis) — install, publish, and run
+
+This fork uses `main` as the default branch and publishes under the `@jerrettdavis/*` scope.
+
+### Install from registry
+
+```bash
+# CLI
+npm install -g @jerrettdavis/squad-cli
+
+# SDK
+npm install @jerrettdavis/squad-sdk
+```
+
+### Publish packages from GitHub Actions
+
+Workflow: `.github/workflows/fork-publish.yml`
+
+- Trigger: **workflow_dispatch**
+- Inputs:
+  - `version` (optional)
+  - `npmScope` (default: `jerrettdavis`)
+  - `publishToNpm` (default: false)
+
+#### GitHub Packages publish
+
+Runs by default using `GITHUB_TOKEN`.
+
+#### Optional npmjs publish
+
+Set `publishToNpm=true` and configure repository secret:
+- `NPM_TOKEN`
+
+### Local run/test from fork
+
+```bash
+git clone https://github.com/JerrettDavis/claude-squad.git
+cd claude-squad
+npm ci
+npm run build
+npm install -g ./packages/squad-cli
+squad --version
+```
+
 ---
 
 ## Upgrading
@@ -93,7 +137,7 @@ Upgrading Squad is a two-step process.
 **Step 1: Update the CLI binary**
 
 ```bash
-npm install -g @bradygaster/squad-cli@latest
+npm install -g @jerrettdavis/squad-cli@latest
 ```
 
 **Step 2: Update Squad-owned files in your project**
@@ -253,7 +297,7 @@ Prefer TypeScript? You can define your team in code instead of markdown. Create 
 
 ```typescript
 // squad.config.ts
-import { defineSquad, defineTeam, defineAgent } from '@bradygaster/squad-sdk';
+import { defineSquad, defineTeam, defineAgent } from '@jerrettdavis/squad-sdk';
 
 export default defineSquad({
   team: defineTeam({ name: 'Platform Squad', members: ['@edie', '@mcmanus'] }),
@@ -271,8 +315,8 @@ Run `squad build` to generate all the markdown. See the [SDK-First Mode Guide](d
 ## Monorepo Development
 
 Squad is a monorepo with two packages:
-- **`@bradygaster/squad-sdk`** - Core runtime and library for programmable agent orchestration
-- **`@bradygaster/squad-cli`** - Command-line interface that depends on the SDK
+- **`@jerrettdavis/squad-sdk`** - Core runtime and library for programmable agent orchestration
+- **`@jerrettdavis/squad-cli`** - Command-line interface that depends on the SDK
 
 ### Building
 
@@ -340,4 +384,5 @@ The SDK provides programmatic control over agent orchestration - custom tools, h
 - [Extensibility guide](docs/src/content/docs/guide/extensibility.md)
 - [Samples](samples/README.md) - eight working examples from beginner to advanced
 
-For SDK installation: `npm install @bradygaster/squad-sdk`
+For SDK installation: `npm install @jerrettdavis/squad-sdk`
+
