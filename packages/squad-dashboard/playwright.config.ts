@@ -17,8 +17,12 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'npx vite preview --port 4173',
+    command: 'npx vite --port 4173 --host',
     port: 4173,
     reuseExistingServer: !process.env.CI,
+    env: {
+      VITE_USE_MOCKS: 'false',
+      VITE_API_BASE_URL: process.env.E2E_API_BASE_URL || 'http://localhost:8790',
+    },
   },
 })

@@ -9,7 +9,7 @@ const host = process.env.SQUAD_API_HOST || '0.0.0.0';
 const owner = process.env.SQUAD_REPO_OWNER || 'JerrettDavis';
 const repo = process.env.SQUAD_REPO_NAME || 'claude-squad';
 const repoRoot = process.env.SQUAD_REPO_ROOT || process.cwd();
-const useLiveGh = process.env.SQUAD_API_LIVE_GH !== '0';
+const useLiveGh = process.env.SQUAD_API_LIVE_GH === '1';
 const useStubData = process.env.SQUAD_API_STUB_DATA === '1';
 
 const squadDir = join(repoRoot, '.squad');
@@ -66,7 +66,11 @@ function safeWriteJson(path, data) {
 // --- GitHub Data ---
 
 function getIssues() {
-  if (!useLiveGh) return useStubData ? stubIssues() : [];
+  if (!useLiveGh) {
+    const stored = safeReadJson(issuesPath, { issues: [] }).issues;
+    if (stored.length > 0) return stored;
+    return useStubData ? stubIssues() : [];
+  }
   return safeGh(
     `gh issue list --repo ${owner}/${repo} --limit 50 --state all --json number,title,state,labels,author,url,createdAt,updatedAt,comments,body`,
     stubIssues()
@@ -87,7 +91,11 @@ function getIssues() {
 }
 
 function getPrs() {
-  if (!useLiveGh) return useStubData ? stubPrs() : [];
+  if (!useLiveGh) {
+    const stored = safeReadJson(prsPath, { prs: [] }).prs;
+    if (stored.length > 0) return stored;
+    return useStubData ? stubPrs() : [];
+  }
   return safeGh(
     `gh pr list --repo ${owner}/${repo} --limit 50 --state all --json number,title,state,isDraft,author,url,headRefName,baseRefName,additions,deletions,changedFiles,createdAt,updatedAt,reviews,comments`,
     stubPrs()
@@ -135,6 +143,8 @@ function stubPrs() {
 // --- Agent Config ---
 
 const agentConfigPath = join(squadDir, 'agents.json');
+const issuesPath = join(squadDir, 'issues.json');
+const prsPath = join(squadDir, 'prs.json');
 
 function getAgentConfigs() {
   return safeReadJson(agentConfigPath, { agents: [] }).agents;
@@ -266,6 +276,68 @@ function getGitDiff(commitHash) {
   } catch { return ''; }
 }
 
+function resetWorkspaceData() {
+  saveAgentConfigs([]);
+  safeWriteJson(issuesPath, { issues: [] });
+  safeWriteJson(prsPath, { prs: [] });
+  safeWriteJson(eventLogPath, { events: [] });
+  ensureDir(wikiDir);
+}
+
+function seedWorkspaceData() {
+  const now = new Date().toISOString();
+  const issues = [
+    {
+      id: 101,
+      number: 101,
+      title: 'AgentHub: implement local mention parser',
+      state: 'open',
+      labels: [{ id: 1, name: 'enhancement', color: 'a2eeef' }],
+      user: { login: 'jd', id: 1 },
+      html_url: '#',
+      created_at: now,
+      updated_at: now,
+      comments: 3,
+      body: 'Need @copilot-agent mention support with #issue links',
+      reactions: { '+1': 2, eyes: 1 }
+    }
+  ];
+  const prs = [
+    {
+      id: 201,
+      number: 201,
+      title: 'feat: add issue mentions + reactions UI',
+      state: 'open',
+      draft: false,
+      user: { login: 'claudebot', id: 2 },
+      head: { ref: 'feature/mentions' },
+      base: { ref: 'main' },
+      html_url: '#',
+      additions: 142,
+      deletions: 19,
+      changed_files: 7,
+      created_at: now,
+      updated_at: now,
+      comments: 2,
+      _agenthub: { steering: 'available' }
+    }
+  ];
+  const agents = [
+    { id: 'copilot-agent', name: 'Copilot Agent', status: 'active', model: 'gpt-5.3-codex', currentTask: 'closing e2e suite', uptimeSec: 1200, tokensIn: 12000, tokensOut: 8000, requestCount: 9, costUsd: 0.82 },
+    { id: 'claudebot', name: 'ClaudeBot', status: 'active', model: 'claude-opus-4-6', currentTask: 'UI wiring', uptimeSec: 1800, tokensIn: 18000, tokensOut: 11000, requestCount: 11, costUsd: 1.22 }
+  ];
+  saveAgentConfigs(agents);
+  safeWriteJson(issuesPath, { issues });
+  safeWriteJson(prsPath, { prs });
+  safeWriteJson(eventLogPath, {
+    events: [
+      { type: 'issue.comment_added', ts: now, payload: { issue: 101, author: 'jd', text: 'Please add reactions too' } },
+      { type: 'pr.review_requested', ts: now, payload: { pr: 201, reviewer: 'copilot-agent' } }
+    ]
+  });
+  saveWikiPage('agenthub-runbook', '# AgentHub Runbook\n\n- Start local stack\n- Seed test data\n- Validate screenshots');
+}
+
 // --- Router ---
 
 const server = http.createServer(async (req, res) => {
@@ -315,6 +387,15 @@ const server = http.createServer(async (req, res) => {
   }
 
   // --- Dashboard API ---
+  if (req.method === 'POST' && url.pathname === '/api/dev/reset') {
+    resetWorkspaceData();
+    return json(res, 200, { ok: true, mode: 'reset' });
+  }
+  if (req.method === 'POST' && url.pathname === '/api/dev/seed') {
+    seedWorkspaceData();
+    return json(res, 200, { ok: true, mode: 'seeded' });
+  }
+
   if (req.method === 'GET' && url.pathname === '/api/issues') return json(res, 200, getIssues());
   if (req.method === 'GET' && url.pathname === '/api/prs') return json(res, 200, getPrs());
   if (req.method === 'GET' && url.pathname === '/api/agents') return json(res, 200, getAgents());

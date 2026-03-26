@@ -93,6 +93,10 @@ squad --orchestrator agenthub --agenthub-url http://localhost:8787
 
 This submits coordinator requests as jobs (`pipe=agenthub`) instead of creating a local coordinator session.
 
+## Validation docs
+
+- `docs/agenthub-e2e.md` — local E2E flow, seeded/empty workspace scenarios, endpoint checklist, screenshot coverage.
+
 ## Next implementation steps
 
 1. Extend non-shell commands to support AgentHub routing where applicable.
