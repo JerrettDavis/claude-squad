@@ -10,6 +10,7 @@ const owner = process.env.SQUAD_REPO_OWNER || 'JerrettDavis';
 const repo = process.env.SQUAD_REPO_NAME || 'claude-squad';
 const repoRoot = process.env.SQUAD_REPO_ROOT || process.cwd();
 const useLiveGh = process.env.SQUAD_API_LIVE_GH !== '0';
+const useStubData = process.env.SQUAD_API_STUB_DATA === '1';
 
 const squadDir = join(repoRoot, '.squad');
 
@@ -65,7 +66,7 @@ function safeWriteJson(path, data) {
 // --- GitHub Data ---
 
 function getIssues() {
-  if (!useLiveGh) return stubIssues();
+  if (!useLiveGh) return useStubData ? stubIssues() : [];
   return safeGh(
     `gh issue list --repo ${owner}/${repo} --limit 50 --state all --json number,title,state,labels,author,url,createdAt,updatedAt,comments,body`,
     stubIssues()
@@ -86,7 +87,7 @@ function getIssues() {
 }
 
 function getPrs() {
-  if (!useLiveGh) return stubPrs();
+  if (!useLiveGh) return useStubData ? stubPrs() : [];
   return safeGh(
     `gh pr list --repo ${owner}/${repo} --limit 50 --state all --json number,title,state,isDraft,author,url,headRefName,baseRefName,additions,deletions,changedFiles,createdAt,updatedAt,reviews,comments`,
     stubPrs()
@@ -147,6 +148,7 @@ function saveAgentConfigs(agents) {
 function getAgents() {
   const configs = getAgentConfigs();
   if (configs.length === 0) {
+    if (!useStubData) return [];
     // Return enriched defaults
     return [
       { id: 'claude-bot', name: 'Claude Bot', status: 'running', model: 'claude-opus-4-6', provider: 'claude-code', currentTask: 'Building dashboard API', role: 'developer', uptimeSec: 7200, tokensIn: 142000, tokensOut: 87400, requestCount: 47, costUsd: 4.82, capabilities: ['browser', 'personal-gh'], enabled: true },

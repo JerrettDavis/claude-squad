@@ -108,6 +108,7 @@ async function main() {
       SQUAD_API_PORT: String(apiPort),
       SQUAD_REPO_ROOT: workspaceDir,
       SQUAD_API_LIVE_GH: '0',
+      SQUAD_API_STUB_DATA: '0',
     })
   );
 
