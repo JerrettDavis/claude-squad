@@ -17,6 +17,7 @@ import { OrchestrationPage } from '@/pages/orchestration'
 import { DecisionsPage } from '@/pages/decisions'
 import { SteeringPage } from '@/pages/steering'
 import { CostsPage } from '@/pages/costs'
+import { SettingsPage } from '@/pages/settings'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -49,6 +50,7 @@ export default function App() {
               <Route path="/decisions" element={<DecisionsPage />} />
               <Route path="/steering" element={<SteeringPage />} />
               <Route path="/costs" element={<CostsPage />} />
+              <Route path="/settings" element={<SettingsPage />} />
             </Route>
           </Routes>
         </BrowserRouter>

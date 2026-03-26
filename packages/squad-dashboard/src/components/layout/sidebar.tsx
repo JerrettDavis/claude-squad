@@ -2,7 +2,7 @@ import { NavLink } from 'react-router-dom'
 import {
   Bot, GitPullRequest, CircleDot, Activity, LayoutDashboard,
   GitBranch, History, FolderGit2, BookOpen, FolderKanban,
-  Target, ScrollText, Inbox, Joystick, DollarSign,
+  Target, ScrollText, Inbox, Joystick, DollarSign, Settings,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { ThemeToggle } from '@/components/theme-toggle'
@@ -43,6 +43,7 @@ const sections = [
       { to: '/decisions', icon: Inbox, label: 'Decision Inbox' },
       { to: '/steering', icon: Joystick, label: 'Agent Steering' },
       { to: '/costs', icon: DollarSign, label: 'Cost Tracking' },
+      { to: '/settings', icon: Settings, label: 'Settings' },
     ],
   },
 ]

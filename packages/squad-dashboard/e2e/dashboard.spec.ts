@@ -189,6 +189,15 @@ test.describe('Squad Dashboard', () => {
     await page.screenshot({ path: 'e2e/screenshots/costs.png', fullPage: true })
   })
 
+  test('settings page shows API connection and theme config', async ({ page }) => {
+    await page.goto('/settings')
+    await expect(page.getByRole('heading', { name: 'Settings' })).toBeVisible()
+    await expect(page.getByText('API Connection')).toBeVisible()
+    await expect(page.getByText('Appearance')).toBeVisible()
+    await expect(page.getByText('Mock Mode')).toBeVisible()
+    await page.screenshot({ path: 'e2e/screenshots/settings.png', fullPage: true })
+  })
+
   test('sidebar navigation works across all pages', async ({ page }) => {
     await page.goto('/')
     await expect(page.getByRole('heading', { name: 'Squad Dashboard' })).toBeVisible()
@@ -234,6 +243,9 @@ test.describe('Squad Dashboard', () => {
 
     await page.getByRole('link', { name: 'Cost Tracking' }).click()
     await expect(page.getByRole('heading', { name: 'Cost Tracking' })).toBeVisible()
+
+    await page.getByRole('link', { name: 'Settings' }).click()
+    await expect(page.getByRole('heading', { name: 'Settings' })).toBeVisible()
 
     await page.getByRole('link', { name: 'Overview' }).click()
     await expect(page.getByText('Monitor your squad at a glance')).toBeVisible()
