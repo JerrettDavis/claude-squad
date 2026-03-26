@@ -2,13 +2,8 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "./dist",
-    "rootDir": "./src",
-    "declaration": true,
-    "declarationMap": true,
-    "jsx": "react-jsx",
-    "jsxImportSource": "react",
-    "composite": true
+    "rootDir": "./src"
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx"],
-  "references": [{ "path": "../squad-sdk" }]
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
 }
