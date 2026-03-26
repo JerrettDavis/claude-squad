@@ -68,7 +68,13 @@ function safeWriteJson(path, data) {
 function getIssues() {
   if (!useLiveGh) {
     const stored = safeReadJson(issuesPath, { issues: [] }).issues;
-    if (stored.length > 0) return stored;
+    const normalized = stored.map((i) => ({
+      ...i,
+      comments: typeof i.comments === 'number' ? i.comments : (i.commentsList?.length || 0),
+      reactions: i.reactions || {},
+      commentsList: i.commentsList || [],
+    }));
+    if (normalized.length > 0) return normalized;
     return useStubData ? stubIssues() : [];
   }
   return safeGh(
@@ -85,6 +91,8 @@ function getIssues() {
     created_at: i.createdAt,
     updated_at: i.updatedAt,
     comments: i.comments?.length || 0,
+    commentsList: [],
+    reactions: {},
     body: i.body || '',
     _agenthub: { priority: 'normal' },
   }));
@@ -298,6 +306,11 @@ function seedWorkspaceData() {
       created_at: now,
       updated_at: now,
       comments: 3,
+      commentsList: [
+        { id: 'c1', author: 'jd', text: 'Need this before tomorrow', created_at: now },
+        { id: 'c2', author: 'copilot-agent', text: 'Picking this up now', created_at: now },
+        { id: 'c3', author: 'claudebot', text: 'UI side ready', created_at: now }
+      ],
       body: 'Need @copilot-agent mention support with #issue links',
       reactions: { '+1': 2, eyes: 1 }
     }
@@ -397,6 +410,43 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (req.method === 'GET' && url.pathname === '/api/issues') return json(res, 200, getIssues());
+  if (req.method === 'GET' && /^\/api\/issues\/\d+\/comments$/.test(url.pathname)) {
+    const n = Number(url.pathname.split('/')[3]);
+    const issues = getIssues();
+    const issue = issues.find((i) => i.number === n);
+    return json(res, 200, issue?.commentsList || []);
+  }
+  if (req.method === 'POST' && /^\/api\/issues\/\d+\/comments$/.test(url.pathname)) {
+    const n = Number(url.pathname.split('/')[3]);
+    const body = await readBody(req);
+    const issuesDoc = safeReadJson(issuesPath, { issues: [] });
+    const idx = issuesDoc.issues.findIndex((i) => i.number === n);
+    if (idx < 0) return json(res, 404, { error: 'issue not found' });
+    const issue = issuesDoc.issues[idx];
+    issue.commentsList = issue.commentsList || [];
+    const c = { id: `c${Date.now()}`, author: body?.author || 'unknown', text: body?.text || '', created_at: new Date().toISOString() };
+    issue.commentsList.push(c);
+    issue.comments = issue.commentsList.length;
+    issuesDoc.issues[idx] = issue;
+    safeWriteJson(issuesPath, issuesDoc);
+    broadcastEvent({ type: 'issue.comment_added', ts: new Date().toISOString(), payload: { issue: n, author: c.author, text: c.text } });
+    return json(res, 201, c);
+  }
+  if (req.method === 'POST' && /^\/api\/issues\/\d+\/reactions$/.test(url.pathname)) {
+    const n = Number(url.pathname.split('/')[3]);
+    const body = await readBody(req);
+    const emoji = body?.emoji || '+1';
+    const issuesDoc = safeReadJson(issuesPath, { issues: [] });
+    const idx = issuesDoc.issues.findIndex((i) => i.number === n);
+    if (idx < 0) return json(res, 404, { error: 'issue not found' });
+    const issue = issuesDoc.issues[idx];
+    issue.reactions = issue.reactions || {};
+    issue.reactions[emoji] = (issue.reactions[emoji] || 0) + 1;
+    issuesDoc.issues[idx] = issue;
+    safeWriteJson(issuesPath, issuesDoc);
+    broadcastEvent({ type: 'issue.reaction_added', ts: new Date().toISOString(), payload: { issue: n, emoji } });
+    return json(res, 201, { ok: true, reactions: issue.reactions });
+  }
   if (req.method === 'GET' && url.pathname === '/api/prs') return json(res, 200, getPrs());
   if (req.method === 'GET' && url.pathname === '/api/agents') return json(res, 200, getAgents());
   if (req.method === 'GET' && url.pathname === '/api/events') return json(res, 200, { events: getEvents() });

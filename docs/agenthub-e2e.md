@@ -64,13 +64,14 @@ Covers:
 
 1. Empty workspace visuals and counts
 2. Seeded workspace visuals for overview/issues/PRs/activity
+3. Interaction mutations (issue comment + reaction) with endpoint assertions and screenshots
 3. Screenshot artifacts for both modes
 
 Run:
 
 ```bash
 cd packages/squad-dashboard
-npx playwright test e2e/agenthub-live.spec.ts
+npx playwright test e2e/agenthub-live.spec.ts e2e/agenthub-interactions.spec.ts
 ```
 
 ## Endpoint coverage checklist
@@ -79,6 +80,9 @@ npx playwright test e2e/agenthub-live.spec.ts
 - `POST /api/dev/reset`
 - `POST /api/dev/seed`
 - `GET /api/issues`
+- `GET /api/issues/:number/comments`
+- `POST /api/issues/:number/comments`
+- `POST /api/issues/:number/reactions`
 - `GET /api/prs`
 - `GET /api/agents`
 - `GET /api/events`
