@@ -15,6 +15,30 @@ This branch introduces an **AgentHub MVP**: a lightweight, self-hosted orchestra
 npm run agenthub:serve
 ```
 
+## One-command local stack (AgentHub + API + Dashboard)
+
+```bash
+npm run stack:local -- --workspace demo
+```
+
+Useful flags:
+
+- `--workspace <name>`: workspace folder under `.local/workspaces/<name>`
+- `--fresh`: reset `.squad` + `.agenthub` state for that workspace before launch
+- `--dashboard-port <port>` (default `5173`)
+- `--api-port <port>` (default `8790`)
+- `--agenthub-port <port>` (default `8787`)
+
+Examples:
+
+```bash
+# reusable workspace
+npm run stack:local -- --workspace team-a
+
+# clean test run each time
+npm run stack:local -- --workspace team-a --fresh
+```
+
 Optional env vars:
 
 - `AGENTHUB_HOST` (default `0.0.0.0`)

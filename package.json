@@ -22,7 +22,8 @@
     "docs:dev": "cd docs && npm run dev",
     "docs:preview": "cd docs && npm run preview",
     "agenthub:serve": "node scripts/agenthub-server.mjs",
-    "api:serve": "node packages/squad-api/src/server.mjs"
+    "api:serve": "node packages/squad-api/src/server.mjs",
+    "stack:local": "node scripts/local-stack.mjs"
   },
   "engines": {
     "node": ">=22.5.0"

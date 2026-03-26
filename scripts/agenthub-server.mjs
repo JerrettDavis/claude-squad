@@ -1,13 +1,40 @@
 #!/usr/bin/env node
 import http from 'node:http';
 import { URL } from 'node:url';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
 
 const port = Number(process.env.AGENTHUB_PORT || 8787);
 const host = process.env.AGENTHUB_HOST || '0.0.0.0';
+const stateDir = process.env.AGENTHUB_STATE_DIR || join(process.cwd(), '.local', 'agenthub');
+const stateFile = join(stateDir, 'jobs.json');
 
 /** @type {Map<string, any>} */
 const jobs = new Map();
 let seq = 0;
+
+function ensureStateDir() {
+  if (!existsSync(stateDir)) mkdirSync(stateDir, { recursive: true });
+}
+
+function saveState() {
+  ensureStateDir();
+  const all = Array.from(jobs.values());
+  writeFileSync(stateFile, JSON.stringify({ seq, jobs: all }, null, 2) + '\n');
+}
+
+function loadState() {
+  try {
+    if (!existsSync(stateFile)) return;
+    const parsed = JSON.parse(readFileSync(stateFile, 'utf8'));
+    seq = Number(parsed?.seq || 0);
+    for (const j of parsed?.jobs || []) {
+      jobs.set(j.id, j);
+    }
+  } catch {
+    // ignore bad state; start clean
+  }
+}
 
 function json(res, status, body) {
   const text = JSON.stringify(body, null, 2);
@@ -48,6 +75,7 @@ function newJob(input) {
     result: null,
   };
   jobs.set(id, job);
+  saveState();
 
   // Minimal fake runner so queue is observable end-to-end.
   setTimeout(() => {
@@ -55,6 +83,7 @@ function newJob(input) {
     if (!j || j.status !== 'queued') return;
     j.status = 'running';
     j.updatedAt = new Date().toISOString();
+    saveState();
   }, 300);
 
   setTimeout(() => {
@@ -66,10 +95,13 @@ function newJob(input) {
       summary: 'AgentHub MVP completed placeholder run',
       next: 'Wire real squad runtime executor here',
     };
+    saveState();
   }, 1200);
 
   return job;
 }
+
+loadState();
 
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url || '/', `http://${req.headers.host || 'localhost'}`);
@@ -81,6 +113,7 @@ const server = http.createServer(async (req, res) => {
       service: 'agenthub',
       version: 'mvp',
       jobs: jobs.size,
+      stateDir,
       time: new Date().toISOString(),
     });
   }
@@ -119,6 +152,7 @@ const server = http.createServer(async (req, res) => {
     }
     job.status = 'canceled';
     job.updatedAt = new Date().toISOString();
+    saveState();
     return json(res, 200, job);
   }
 
@@ -127,5 +161,6 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(port, host, () => {
   console.log(`AgentHub listening on http://${host}:${port}`);
+  console.log(`State dir: ${stateDir}`);
   console.log('Endpoints: GET /healthz, POST /v1/jobs, GET /v1/jobs, GET /v1/jobs/:id, POST /v1/jobs/:id/cancel');
 });
