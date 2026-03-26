@@ -6,16 +6,16 @@ import {
   SquadCoordinator,
   type SquadCoordinatorOptions,
   type CoordinatorResult,
-} from '@bradygaster/squad-sdk/coordinator';
-import type { CoordinatorContext } from '@bradygaster/squad-sdk/coordinator';
-import { DirectResponseHandler } from '@bradygaster/squad-sdk/coordinator';
-import { EventBus } from '@bradygaster/squad-sdk/runtime/event-bus';
-import { DEFAULT_CONFIG, type SquadConfig } from '@bradygaster/squad-sdk/runtime';
+} from '@jerrettdavis/squad-sdk/coordinator';
+import type { CoordinatorContext } from '@jerrettdavis/squad-sdk/coordinator';
+import { DirectResponseHandler } from '@jerrettdavis/squad-sdk/coordinator';
+import { EventBus } from '@jerrettdavis/squad-sdk/runtime/event-bus';
+import { DEFAULT_CONFIG, type SquadConfig } from '@jerrettdavis/squad-sdk/runtime';
 import {
   compileRoutingRules,
   type CompiledRouter,
-} from '@bradygaster/squad-sdk/config';
-import type { FanOutDependencies, SpawnResult } from '@bradygaster/squad-sdk/coordinator';
+} from '@jerrettdavis/squad-sdk/config';
+import type { FanOutDependencies, SpawnResult } from '@jerrettdavis/squad-sdk/coordinator';
 import {
   resolveModel,
   ModelFallbackExecutor,
@@ -23,7 +23,7 @@ import {
   isTierFallbackAllowed,
   type ResolvedModel,
   type ModelTier,
-} from '@bradygaster/squad-sdk/agents';
+} from '@jerrettdavis/squad-sdk/agents';
 
 // --- Helpers ---
 
@@ -580,3 +580,4 @@ describe('isTierFallbackAllowed', () => {
     expect(isTierFallbackAllowed('premium', 'standard', false)).toBe(false);
   });
 });
+

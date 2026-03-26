@@ -11,18 +11,18 @@ import {
   anonymizeContent,
   type ExportBundle,
   type ExportOptions,
-} from '@bradygaster/squad-sdk/sharing';
+} from '@jerrettdavis/squad-sdk/sharing';
 import {
   importSquadConfig,
   deserializeBundle,
   validateBundle,
-} from '@bradygaster/squad-sdk/sharing';
+} from '@jerrettdavis/squad-sdk/sharing';
 import {
   splitHistory,
   mergeHistory,
   type AgentHistory,
   type HistoryEntry,
-} from '@bradygaster/squad-sdk/sharing';
+} from '@jerrettdavis/squad-sdk/sharing';
 
 // --- Helpers ---
 
@@ -482,3 +482,4 @@ describe('History Merging', () => {
     expect(merged.source).toBe('remote');
   });
 });
+

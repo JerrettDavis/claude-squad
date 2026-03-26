@@ -18,7 +18,7 @@ import {
   writeModelPreference,
   writeAgentModelOverrides,
   resolveModel,
-} from '@bradygaster/squad-sdk/config';
+} from '@jerrettdavis/squad-sdk/config';
 
 // Temp directory for each test
 let squadDir: string;
@@ -351,3 +351,4 @@ describe('round-trip persistence', () => {
     expect(readAgentModelOverrides(squadDir).fenster).toBe('claude-sonnet-4.6');
   });
 });
+

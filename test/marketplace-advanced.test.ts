@@ -4,9 +4,9 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import type { SquadConfig } from '@bradygaster/squad-sdk/config';
-import type { MarketplaceManifest } from '@bradygaster/squad-sdk/marketplace';
-import { ManifestCategory } from '@bradygaster/squad-sdk/marketplace';
+import type { SquadConfig } from '@jerrettdavis/squad-sdk/config';
+import type { MarketplaceManifest } from '@jerrettdavis/squad-sdk/marketplace';
+import { ManifestCategory } from '@jerrettdavis/squad-sdk/marketplace';
 import {
   searchMarketplace,
   validateEntry,
@@ -14,21 +14,21 @@ import {
   type MarketplaceEntry,
   type MarketplaceIndex,
   type MarketplaceSearchQuery,
-} from '@bradygaster/squad-sdk/marketplace';
+} from '@jerrettdavis/squad-sdk/marketplace';
 import {
   MarketplaceBrowser,
   formatEntryList,
   formatEntryDetails,
   type MarketplaceFetcher,
-} from '@bradygaster/squad-sdk/marketplace';
-import { MarketplaceBackend } from '@bradygaster/squad-sdk/marketplace';
+} from '@jerrettdavis/squad-sdk/marketplace';
+import { MarketplaceBackend } from '@jerrettdavis/squad-sdk/marketplace';
 import {
   validateRemoteAgent,
   quarantineAgent,
   generateSecurityReport,
   SECURITY_RULES,
   type RemoteAgentDefinition,
-} from '@bradygaster/squad-sdk/marketplace';
+} from '@jerrettdavis/squad-sdk/marketplace';
 
 // --- Helpers ---
 
@@ -624,3 +624,4 @@ describe('SECURITY_RULES', () => {
     }
   });
 });
+

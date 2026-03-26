@@ -8,9 +8,9 @@ import { mkdir, rm, readFile, writeFile } from 'fs/promises';
 import { join } from 'path';
 import { existsSync } from 'fs';
 import { randomBytes } from 'crypto';
-import { runInit } from '@bradygaster/squad-cli/core/init';
-import { runExport } from '@bradygaster/squad-cli/commands/export';
-import { runImport } from '@bradygaster/squad-cli/commands/import';
+import { runInit } from '@jerrettdavis/squad-cli/core/init';
+import { runExport } from '@jerrettdavis/squad-cli/commands/export';
+import { runImport } from '@jerrettdavis/squad-cli/commands/import';
 
 const TEST_ROOT = join(process.cwd(), `.test-cli-export-import-${randomBytes(4).toString('hex')}`);
 const IMPORT_ROOT = join(process.cwd(), `.test-cli-import-target-${randomBytes(4).toString('hex')}`);
@@ -252,3 +252,4 @@ describe('CLI: export/import commands', () => {
     expect(history).toContain('my-project-export');
   });
 });
+

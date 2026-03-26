@@ -11,8 +11,8 @@ import { mkdir, rm, writeFile } from 'fs/promises';
 import { join } from 'path';
 import { existsSync } from 'fs';
 import { randomBytes } from 'crypto';
-import { runDoctor, getDoctorMode, checkNodeVersion } from '@bradygaster/squad-cli/commands/doctor';
-import type { DoctorCheck } from '@bradygaster/squad-cli/commands/doctor';
+import { runDoctor, getDoctorMode, checkNodeVersion } from '@jerrettdavis/squad-cli/commands/doctor';
+import type { DoctorCheck } from '@jerrettdavis/squad-cli/commands/doctor';
 
 const TEST_ROOT = join(process.cwd(), `.test-doctor-${randomBytes(4).toString('hex')}`);
 
@@ -290,3 +290,4 @@ describe('squad doctor', () => {
     expect(agentMdCheck?.message).toContain('squad upgrade');
   });
 });
+

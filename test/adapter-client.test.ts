@@ -6,7 +6,7 @@
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { SquadClient, type SquadClientOptions } from '@bradygaster/squad-sdk/client';
+import { SquadClient, type SquadClientOptions } from '@jerrettdavis/squad-sdk/client';
 import { CopilotClient } from '@github/copilot-sdk';
 
 // Mock CopilotClient
@@ -505,3 +505,4 @@ describe('SquadClient — Event Subscriptions', () => {
     expect(unsubscribe).toBeInstanceOf(Function);
   });
 });
+

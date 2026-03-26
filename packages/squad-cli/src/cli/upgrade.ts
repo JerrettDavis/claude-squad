@@ -262,7 +262,7 @@ export async function performUpgrade(
 // SDK upgrade (--sdk flag, M4-5)
 // ============================================================================
 
-const SDK_PACKAGE_NAME = '@bradygaster/squad';
+const SDK_PACKAGE_NAME = '@jerrettdavis/squad-sdk';
 
 /**
  * Upgrade the @bradygaster/squad SDK dependency in a project.

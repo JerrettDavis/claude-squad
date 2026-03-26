@@ -17,10 +17,10 @@ import {
   writeEconomyMode,
   applyEconomyMode,
   ECONOMY_MODEL_MAP,
-} from '@bradygaster/squad-sdk/config';
+} from '@jerrettdavis/squad-sdk/config';
 import {
   resolveModel as sdkResolveModel,
-} from '@bradygaster/squad-sdk/agents';
+} from '@jerrettdavis/squad-sdk/agents';
 
 let squadDir: string;
 
@@ -289,3 +289,4 @@ describe('SDK resolveModel (agents) economy mode', () => {
     expect(result.source).toBe('charter');
   });
 });
+

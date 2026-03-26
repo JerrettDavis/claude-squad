@@ -12,8 +12,8 @@ import {
   SkillSourceRegistry,
   type SkillSource,
   type SkillManifest,
-} from '@bradygaster/squad-sdk/skills';
-import type { GitHubFetcher } from '@bradygaster/squad-sdk/config';
+} from '@jerrettdavis/squad-sdk/skills';
+import type { GitHubFetcher } from '@jerrettdavis/squad-sdk/config';
 
 // --- Helpers ---
 
@@ -322,3 +322,4 @@ describe('SkillSourceRegistry', () => {
     expect(skill!.name).toBe('High Priority');
   });
 });
+

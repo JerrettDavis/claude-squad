@@ -10,7 +10,7 @@ import {
   PreToolUseContext,
   PostToolUseContext,
   DEFAULT_BLOCKED_COMMANDS,
-} from '@bradygaster/squad-sdk/hooks';
+} from '@jerrettdavis/squad-sdk/hooks';
 
 describe('HookPipeline', () => {
   describe('File-write guard', () => {
@@ -633,3 +633,4 @@ describe('HookPipeline', () => {
     });
   });
 });
+

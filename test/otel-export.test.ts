@@ -16,8 +16,8 @@ import {
   BasicTracerProvider,
 } from '@opentelemetry/sdk-trace-base';
 import { trace, SpanStatusCode } from '@opentelemetry/api';
-import { getTracer, shutdownOTel } from '@bradygaster/squad-sdk/runtime/otel';
-import { initAgentModeTelemetry } from '@bradygaster/squad-sdk';
+import { getTracer, shutdownOTel } from '@jerrettdavis/squad-sdk/runtime/otel';
+import { initAgentModeTelemetry } from '@jerrettdavis/squad-sdk';
 
 // ---------------------------------------------------------------------------
 // Test infrastructure — in-memory exporter
@@ -177,3 +177,4 @@ describe('Dual-mode OTel telemetry', () => {
     expect(typeof handle.metrics).toBe('boolean');
   });
 });
+

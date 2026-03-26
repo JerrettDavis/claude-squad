@@ -18,8 +18,8 @@ import {
   validatePackageContents,
   type MarketplaceManifest,
   type ExtensionEvent,
-} from '@bradygaster/squad-sdk/marketplace';
-import type { SquadConfig } from '@bradygaster/squad-sdk/config';
+} from '@jerrettdavis/squad-sdk/marketplace';
+import type { SquadConfig } from '@jerrettdavis/squad-sdk/config';
 
 // --- Helpers ---
 
@@ -423,3 +423,4 @@ describe('validatePackageContents', () => {
     expect(result.missingFiles).toContain('icon');
   });
 });
+

@@ -8,9 +8,9 @@ import { mkdir, rm, readFile, writeFile } from 'fs/promises';
 import { join } from 'path';
 import { existsSync, mkdirSync, writeFileSync, readFileSync, rmSync, chmodSync } from 'fs';
 import { randomBytes } from 'crypto';
-import { runInit } from '@bradygaster/squad-cli/core/init';
-import { runUpgrade, ensureGitattributes, ensureGitignore, ensureDirectories } from '@bradygaster/squad-cli/core/upgrade';
-import { getPackageVersion } from '@bradygaster/squad-cli/core/version';
+import { runInit } from '@jerrettdavis/squad-cli/core/init';
+import { runUpgrade, ensureGitattributes, ensureGitignore, ensureDirectories } from '@jerrettdavis/squad-cli/core/upgrade';
+import { getPackageVersion } from '@jerrettdavis/squad-cli/core/version';
 
 const TEST_ROOT = join(process.cwd(), `.test-cli-upgrade-${randomBytes(4).toString('hex')}`);
 
@@ -333,3 +333,4 @@ describe('CLI: upgrade command', () => {
     expect(forceResult.filesUpdated).toContain('squad.agent.md');
   });
 });
+

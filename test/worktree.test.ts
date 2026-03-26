@@ -31,8 +31,8 @@ import {
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 
-import { resolveSquad } from '@bradygaster/squad-sdk/resolution';
-import { detectSquadDir } from '@bradygaster/squad-cli/core/detect-squad-dir';
+import { resolveSquad } from '@jerrettdavis/squad-sdk/resolution';
+import { detectSquadDir } from '@jerrettdavis/squad-cli/core/detect-squad-dir';
 
 // ---------------------------------------------------------------------------
 // Test suite
@@ -214,3 +214,4 @@ describe('worktree regression (#521)', () => {
     });
   });
 });
+

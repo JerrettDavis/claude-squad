@@ -22,12 +22,12 @@ import {
   resolvePersonalSquadDir,
   resolveSquadPaths,
   ensureSquadPathTriple,
-} from '@bradygaster/squad-sdk/resolution';
+} from '@jerrettdavis/squad-sdk/resolution';
 import {
   resolvePersonalAgents,
   mergeSessionCast,
   type PersonalAgentManifest,
-} from '@bradygaster/squad-sdk/agents/personal';
+} from '@jerrettdavis/squad-sdk/agents/personal';
 
 const TEST_ROOT = join(
   process.cwd(),
@@ -555,3 +555,4 @@ describe('charter metadata parsing via resolvePersonalAgents', () => {
     expect(dirs.size).toBe(3);
   });
 });
+

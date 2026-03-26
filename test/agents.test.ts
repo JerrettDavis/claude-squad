@@ -3,9 +3,9 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { compileCharter, type CharterCompileOptions } from '@bradygaster/squad-sdk/agents';
-import { resolveModel, type ModelResolutionOptions } from '@bradygaster/squad-sdk/agents';
-import { ConfigurationError } from '@bradygaster/squad-sdk/adapter/errors';
+import { compileCharter, type CharterCompileOptions } from '@jerrettdavis/squad-sdk/agents';
+import { resolveModel, type ModelResolutionOptions } from '@jerrettdavis/squad-sdk/agents';
+import { ConfigurationError } from '@jerrettdavis/squad-sdk/adapter/errors';
 
 describe('Charter Compilation (M1-8)', () => {
   describe('compileCharter', () => {
@@ -436,3 +436,4 @@ describe('Per-Agent Model Selection (M1-9)', () => {
     });
   });
 });
+

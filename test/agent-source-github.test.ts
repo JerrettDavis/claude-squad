@@ -9,7 +9,7 @@ import {
   type AgentManifest,
   type AgentDefinition,
   parseCharterMetadata,
-} from '@bradygaster/squad-sdk/config';
+} from '@jerrettdavis/squad-sdk/config';
 
 // --- Mock fetcher helper ---
 
@@ -239,3 +239,4 @@ describe('GitHubAgentSource', () => {
     });
   });
 });
+

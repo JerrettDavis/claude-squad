@@ -45,7 +45,7 @@ function createMockCopilotSession(sessionId = 'test-session-42') {
 
 // We test the adapter indirectly by importing SquadClient and stubbing internals.
 // The adapter is constructed inside createSession(), so we mock the CopilotClient.
-import { SquadClient } from '@bradygaster/squad-sdk/client';
+import { SquadClient } from '@jerrettdavis/squad-sdk/client';
 
 describe('CopilotSessionAdapter (via SquadClient)', () => {
   /** Helper: create a SquadClient wired to our mock */
@@ -334,3 +334,4 @@ describe('CopilotSessionAdapter optional methods', () => {
     expect(messages).toHaveLength(1);
   });
 });
+

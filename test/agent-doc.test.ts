@@ -6,14 +6,14 @@ import { describe, it, expect } from 'vitest';
 import {
   parseAgentDoc,
   type AgentDocMetadata,
-} from '@bradygaster/squad-sdk/config';
+} from '@jerrettdavis/squad-sdk/config';
 import {
   syncDocToConfig,
   syncConfigToDoc,
   detectDrift,
   type DriftReport,
-} from '@bradygaster/squad-sdk/config';
-import { defineConfig, type SquadConfig } from '@bradygaster/squad-sdk/config';
+} from '@jerrettdavis/squad-sdk/config';
+import { defineConfig, type SquadConfig } from '@jerrettdavis/squad-sdk/config';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -394,3 +394,4 @@ describe('detectDrift', () => {
     expect(report.inSync).toBe(true);
   });
 });
+

@@ -8,7 +8,7 @@ import {
   detectConnectivity,
   OfflineManager,
   type PendingOperation,
-} from '@bradygaster/squad-sdk/runtime/offline';
+} from '@jerrettdavis/squad-sdk/runtime/offline';
 
 // --- Helpers ---
 
@@ -196,3 +196,4 @@ describe('OfflineManager', () => {
     });
   });
 });
+

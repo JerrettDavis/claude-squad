@@ -47,7 +47,7 @@ function createSpyMeter(): SpyMeter {
 
 let spyMeter: SpyMeter;
 
-vi.mock('@bradygaster/squad-sdk', () => ({
+vi.mock('@jerrettdavis/squad-sdk', () => ({
   getMeter: () => spyMeter,
 }));
 
@@ -59,7 +59,7 @@ import {
   recordShellError,
   isShellTelemetryEnabled,
   _resetShellMetrics,
-} from '@bradygaster/squad-cli/shell/shell-metrics';
+} from '@jerrettdavis/squad-cli/shell/shell-metrics';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -281,3 +281,4 @@ describe('Shell Metrics — Reset', () => {
     expect(spyMeter.createHistogram).not.toHaveBeenCalled();
   });
 });
+

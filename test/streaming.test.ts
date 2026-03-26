@@ -4,9 +4,9 @@ import {
   type StreamDelta,
   type UsageEvent,
   type ReasoningDelta,
-} from '@bradygaster/squad-sdk/runtime/streaming';
-import { CostTracker } from '@bradygaster/squad-sdk/runtime/cost-tracker';
-import { EventBus } from '@bradygaster/squad-sdk/runtime/event-bus';
+} from '@jerrettdavis/squad-sdk/runtime/streaming';
+import { CostTracker } from '@jerrettdavis/squad-sdk/runtime/cost-tracker';
+import { EventBus } from '@jerrettdavis/squad-sdk/runtime/event-bus';
 
 // ============================================================================
 // StreamingPipeline
@@ -479,3 +479,4 @@ function makeReasoning(sessionId: string, content: string, index = 0): Reasoning
     timestamp: new Date(),
   };
 }
+

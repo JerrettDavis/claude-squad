@@ -17,7 +17,7 @@ import React from 'react';
 import { render } from 'ink-testing-library';
 import { Text } from 'ink';
 
-import type { ShellMessage } from '@bradygaster/squad-cli/shell/types';
+import type { ShellMessage } from '@jerrettdavis/squad-cli/shell/types';
 
 const h = React.createElement;
 
@@ -664,3 +664,4 @@ describe('Banner simplification (#626, #627)', () => {
     expect(spacerCount).toBeLessThanOrEqual(1);
   });
 });
+

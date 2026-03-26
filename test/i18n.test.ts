@@ -9,8 +9,8 @@ import {
   auditAccessibility,
   type MessageCatalog,
   type AccessibilityReport,
-} from '@bradygaster/squad-sdk/runtime/i18n';
-import type { SquadConfig } from '@bradygaster/squad-sdk/config';
+} from '@jerrettdavis/squad-sdk/runtime/i18n';
+import type { SquadConfig } from '@jerrettdavis/squad-sdk/config';
 
 function makeConfig(overrides: Partial<SquadConfig> = {}): SquadConfig {
   return {
@@ -163,3 +163,4 @@ describe('auditAccessibility', () => {
     expect(report.findings.every((f) => f.severity !== 'error')).toBe(true);
   });
 });
+

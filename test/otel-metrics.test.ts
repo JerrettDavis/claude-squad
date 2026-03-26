@@ -25,7 +25,7 @@ import {
   recordResponseDuration,
   recordTokensPerSecond,
   _resetMetrics,
-} from '@bradygaster/squad-sdk';
+} from '@jerrettdavis/squad-sdk';
 
 // ---------------------------------------------------------------------------
 // Mock the OTel provider's getMeter to return spy instruments
@@ -64,7 +64,7 @@ function createSpyMeter(): SpyMeter {
 
 let spyMeter: SpyMeter;
 
-vi.mock('@bradygaster/squad-sdk/runtime/otel', () => ({
+vi.mock('@jerrettdavis/squad-sdk/runtime/otel', () => ({
   getMeter: () => spyMeter,
 }));
 
@@ -492,3 +492,4 @@ describe('OTel Metrics — no-op safety', () => {
     }).not.toThrow();
   });
 });
+

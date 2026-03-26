@@ -7,9 +7,9 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { mkdirSync, rmSync, existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, relative, isAbsolute } from 'node:path';
 import { randomBytes } from 'node:crypto';
-import { runLink } from '@bradygaster/squad-cli/commands/link';
-import { writeRemoteConfig } from '@bradygaster/squad-cli/commands/init-remote';
-import { resolveSquadPaths } from '@bradygaster/squad-sdk/resolution';
+import { runLink } from '@jerrettdavis/squad-cli/commands/link';
+import { writeRemoteConfig } from '@jerrettdavis/squad-cli/commands/init-remote';
+import { resolveSquadPaths } from '@jerrettdavis/squad-sdk/resolution';
 
 const TMP = join(process.cwd(), `.test-remote-mode-${randomBytes(4).toString('hex')}`);
 
@@ -145,3 +145,4 @@ describe('writeRemoteConfig (init --mode remote)', () => {
     expect(existsSync(join(projectDir, '.squad', 'config.json'))).toBe(true);
   });
 });
+

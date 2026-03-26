@@ -9,19 +9,19 @@ import {
   validatePipelineConfig,
   getDefaultSteps,
   type CIPipelineConfig,
-} from '@bradygaster/squad-sdk/build';
+} from '@jerrettdavis/squad-sdk/build';
 import {
   parseConventionalCommit,
   bumpVersion,
   stampVersion,
   generateChangelog,
   type CommitInfo,
-} from '@bradygaster/squad-sdk/build';
+} from '@jerrettdavis/squad-sdk/build';
 import {
   detectInstallMethod,
   migrateInstallPath,
   generateMigrationInstructions,
-} from '@bradygaster/squad-sdk/build';
+} from '@jerrettdavis/squad-sdk/build';
 
 // --- Helpers ---
 
@@ -354,3 +354,4 @@ describe('Migration Instructions', () => {
     expect(md).toContain('2.');
   });
 });
+

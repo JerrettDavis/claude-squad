@@ -7,7 +7,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { mkdirSync, rmSync, existsSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { randomBytes } from 'node:crypto';
-import { resolveSquadPaths } from '@bradygaster/squad-sdk/resolution';
+import { resolveSquadPaths } from '@jerrettdavis/squad-sdk/resolution';
 
 const TMP = join(process.cwd(), `.test-dual-root-${randomBytes(4).toString('hex')}`);
 
@@ -177,3 +177,4 @@ describe('resolveSquadPaths()', () => {
     expect(result!.config!.projectKey).toBeNull();
   });
 });
+

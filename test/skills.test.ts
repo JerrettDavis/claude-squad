@@ -13,7 +13,7 @@ import {
   parseFrontmatter,
   parseSkillFile,
   loadSkillsFromDirectory,
-} from '@bradygaster/squad-sdk/skills';
+} from '@jerrettdavis/squad-sdk/skills';
 
 // --- Helpers ---
 
@@ -305,3 +305,4 @@ Content here.`,
     expect(skills).toHaveLength(1); // only my-skill loaded
   });
 });
+

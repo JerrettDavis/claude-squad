@@ -18,7 +18,7 @@ import { trace } from '@opentelemetry/api';
 import {
   Coordinator,
   type CoordinatorConfig,
-} from '@bradygaster/squad-sdk/coordinator';
+} from '@jerrettdavis/squad-sdk/coordinator';
 
 // ---------------------------------------------------------------------------
 // Test OTel infrastructure
@@ -289,3 +289,4 @@ describe('Coordinator routing tracing — span hierarchy', () => {
     expect(traceIds.size).toBe(2);
   });
 });
+

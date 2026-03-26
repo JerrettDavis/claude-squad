@@ -17,7 +17,7 @@ import {
   type PrReview,
   type PrCommit,
   type PrReworkResult,
-} from '@bradygaster/squad-sdk';
+} from '@jerrettdavis/squad-sdk';
 
 // ---------------------------------------------------------------------------
 // calculatePrRework
@@ -296,7 +296,7 @@ function createSpyMeter(): SpyMeter {
 
 let spyMeter: SpyMeter;
 
-vi.mock('@bradygaster/squad-sdk/runtime/otel', () => ({
+vi.mock('@jerrettdavis/squad-sdk/runtime/otel', () => ({
   getMeter: () => spyMeter,
 }));
 
@@ -415,3 +415,4 @@ describe('OTel Rework Metrics (#265)', () => {
     expect(rate.record).toHaveBeenCalledWith(20, { 'pr.number': 2, 'pr.author': 'b' });
   });
 });
+

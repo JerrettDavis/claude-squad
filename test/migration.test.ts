@@ -4,7 +4,7 @@ import {
   parseSemVer,
   compareSemVer,
   type Migration,
-} from '@bradygaster/squad-sdk/config';
+} from '@jerrettdavis/squad-sdk/config';
 import {
   parseTeamMarkdown,
   parseRoutingRulesMarkdown,
@@ -12,7 +12,7 @@ import {
   migrateMarkdownToConfig,
   generateConfigFromParsed,
   type MarkdownParseResult,
-} from '@bradygaster/squad-sdk/config';
+} from '@jerrettdavis/squad-sdk/config';
 
 // ============================================================================
 // Migration Registry
@@ -529,3 +529,4 @@ Default model tier is standard.
     });
   });
 });
+

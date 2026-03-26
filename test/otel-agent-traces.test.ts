@@ -19,7 +19,7 @@ import { trace, SpanStatusCode } from '@opentelemetry/api';
 import {
   AgentSessionManager,
   type AgentCharter,
-} from '@bradygaster/squad-sdk/agents';
+} from '@jerrettdavis/squad-sdk/agents';
 
 // ---------------------------------------------------------------------------
 // Test OTel infrastructure
@@ -271,3 +271,4 @@ describe('Agent lifecycle tracing — error spans', () => {
     }
   });
 });
+
