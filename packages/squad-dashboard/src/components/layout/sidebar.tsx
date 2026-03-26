@@ -6,6 +6,8 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { useHealth } from '@/api/hooks'
+import { USE_MOCKS } from '@/api/client'
 
 const sections = [
   {
@@ -46,6 +48,11 @@ const sections = [
 ]
 
 export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
+  const health = useHealth()
+  const apiConnected = health.data?.ok === true
+  const apiStatus = USE_MOCKS ? 'Mock data' : apiConnected ? 'API connected' : 'API offline'
+  const dotColor = USE_MOCKS ? 'bg-yellow-500' : apiConnected ? 'bg-green-500' : 'bg-red-500'
+
   return (
     <aside className="fixed left-0 top-0 z-40 h-screen w-64 border-r border-border bg-card flex flex-col">
       <div className="flex h-16 items-center gap-3 border-b border-border px-6">
@@ -88,10 +95,10 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
         ))}
       </nav>
 
-      <div className="border-t border-border p-4">
+      <div className="border-t border-border p-4 space-y-2">
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          <div className="h-2 w-2 rounded-full bg-green-500" />
-          <span>4 agents configured</span>
+          <div className={cn('h-2 w-2 rounded-full', dotColor)} />
+          <span>{apiStatus}</span>
         </div>
       </div>
     </aside>
