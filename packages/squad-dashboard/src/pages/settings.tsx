@@ -6,12 +6,12 @@ import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { useHealth } from '@/api/hooks'
 import { USE_MOCKS, BASE_URL } from '@/api/client'
-import { useTheme } from '@/hooks/use-theme'
+import { useTheme, COLOR_SCHEMES, type ColorScheme } from '@/hooks/use-theme'
 import { Settings, Server, Palette, Monitor, Sun, Moon, CheckCircle, XCircle, Info } from 'lucide-react'
 
 export function SettingsPage() {
   const health = useHealth()
-  const { theme, setTheme } = useTheme()
+  const { theme, setTheme, colorScheme, setColorScheme, resolved } = useTheme()
   const [apiUrl, setApiUrl] = useState(BASE_URL)
 
   const apiConnected = health.data?.ok === true
@@ -94,9 +94,9 @@ export function SettingsPage() {
             <CardTitle className="text-base">Appearance</CardTitle>
           </div>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-6">
           <div className="flex items-center gap-3">
-            <span className="text-sm text-muted-foreground w-24">Theme:</span>
+            <span className="text-sm text-muted-foreground w-24">Mode:</span>
             <div className="flex gap-2">
               {([['light', Sun], ['dark', Moon], ['system', Monitor]] as const).map(([t, Icon]) => (
                 <Button
@@ -109,6 +109,35 @@ export function SettingsPage() {
                   <Icon className="h-3.5 w-3.5" />
                   {t.charAt(0).toUpperCase() + t.slice(1)}
                 </Button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <span className="text-sm text-muted-foreground mb-3 block">Color Scheme:</span>
+            <div className="grid grid-cols-5 gap-3">
+              {(Object.entries(COLOR_SCHEMES) as [ColorScheme, typeof COLOR_SCHEMES[ColorScheme]][]).map(([key, scheme]) => (
+                <button
+                  key={key}
+                  onClick={() => setColorScheme(key)}
+                  className={`flex flex-col items-center gap-2 rounded-lg border p-3 transition-all ${
+                    colorScheme === key
+                      ? 'border-primary bg-accent ring-2 ring-primary/20'
+                      : 'border-border hover:border-foreground/20'
+                  }`}
+                >
+                  <div className="flex gap-1">
+                    <div
+                      className="h-6 w-6 rounded-full border border-border"
+                      style={{ backgroundColor: scheme.preview.light }}
+                    />
+                    <div
+                      className="h-6 w-6 rounded-full border border-border"
+                      style={{ backgroundColor: scheme.preview.dark }}
+                    />
+                  </div>
+                  <span className="text-xs font-medium text-foreground">{scheme.label}</span>
+                </button>
               ))}
             </div>
           </div>
@@ -127,7 +156,7 @@ export function SettingsPage() {
           <p><strong className="text-foreground">Squad Dashboard</strong> — Self-hosted agent management UI</p>
           <p>Package: <code className="text-foreground">@jerrettdavis/squad</code></p>
           <p>Stack: React + Vite + Tailwind + shadcn/ui</p>
-          <p>Pages: 16 | Tests: 17 Playwright BDD</p>
+          <p>Pages: 16 | Tests: 18+ Playwright BDD | Themes: 5</p>
         </CardContent>
       </Card>
     </div>
