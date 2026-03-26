@@ -21,6 +21,7 @@ const pages = [
   { path: '/decisions', name: 'decisions', heading: 'Decision Inbox' },
   { path: '/steering', name: 'steering', heading: 'Agent Steering' },
   { path: '/costs', name: 'costs', heading: 'Cost Tracking' },
+  { path: '/agent-config', name: 'agent-config', heading: 'Agent Configuration' },
   { path: '/settings', name: 'settings', heading: 'Settings' },
 ]
 

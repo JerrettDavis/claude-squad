@@ -189,6 +189,35 @@ test.describe('Squad Dashboard', () => {
     await page.screenshot({ path: 'e2e/screenshots/costs.png', fullPage: true })
   })
 
+  test('agent config shows profiles with personality and tool editors', async ({ page }) => {
+    await page.goto('/agent-config')
+    await expect(page.getByRole('heading', { name: 'Agent Configuration' })).toBeVisible()
+    await expect(page.getByText('Select an agent to configure')).toBeVisible()
+    await page.screenshot({ path: 'e2e/screenshots/agent-config.png', fullPage: true })
+
+    // Select an agent
+    await page.getByText('Claude Bot').first().click()
+    await expect(page.getByRole('tab', { name: /Personality/ })).toBeVisible()
+    await expect(page.getByRole('tab', { name: /Tools/ })).toBeVisible()
+    await expect(page.getByRole('tab', { name: /Charter/ })).toBeVisible()
+    await page.screenshot({ path: 'e2e/screenshots/agent-config-personality.png', fullPage: true })
+
+    // Switch to tools tab
+    await page.getByRole('tab', { name: /Tools/ }).click()
+    await expect(page.getByText('Enable All')).toBeVisible()
+    await page.screenshot({ path: 'e2e/screenshots/agent-config-tools.png', fullPage: true })
+
+    // Switch to charter tab
+    await page.getByRole('tab', { name: /Charter/ }).click()
+    await expect(page.getByText('Markdown format')).toBeVisible()
+    await page.screenshot({ path: 'e2e/screenshots/agent-config-charter.png', fullPage: true })
+
+    // Switch to limits tab
+    await page.getByRole('tab', { name: /Limits/ }).click()
+    await expect(page.getByText('Rate Limits')).toBeVisible()
+    await page.screenshot({ path: 'e2e/screenshots/agent-config-limits.png', fullPage: true })
+  })
+
   test('settings page shows API connection and theme config', async ({ page }) => {
     await page.goto('/settings')
     await expect(page.getByRole('heading', { name: 'Settings' })).toBeVisible()
@@ -243,6 +272,9 @@ test.describe('Squad Dashboard', () => {
 
     await page.getByRole('link', { name: 'Cost Tracking' }).click()
     await expect(page.getByRole('heading', { name: 'Cost Tracking' })).toBeVisible()
+
+    await page.getByRole('link', { name: 'Agent Config' }).click()
+    await expect(page.getByRole('heading', { name: 'Agent Configuration' })).toBeVisible()
 
     await page.getByRole('link', { name: 'Settings' }).click()
     await expect(page.getByRole('heading', { name: 'Settings' })).toBeVisible()
