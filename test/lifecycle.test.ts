@@ -15,8 +15,8 @@ import {
   readHistory,
   shadowExists,
   deleteHistoryShadow,
-} from '@bradygaster/squad-sdk/agents';
-import { SquadClientWithPool } from '@bradygaster/squad-sdk/client';
+} from '@jerrettdavis/squad-sdk/agents';
+import { SquadClientWithPool } from '@jerrettdavis/squad-sdk/client';
 
 describe('Agent Lifecycle Manager', () => {
   let tempDir: string;
@@ -408,3 +408,4 @@ function createMockClient(): SquadClientWithPool {
     } as any,
   } as any;
 }
+

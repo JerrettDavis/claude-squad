@@ -18,7 +18,7 @@ import {
   compileCharter,
   compileCharterFull,
   type CharterCompileOptions,
-} from '@bradygaster/squad-sdk/agents';
+} from '@jerrettdavis/squad-sdk/agents';
 
 // --- Fixtures ---
 
@@ -370,3 +370,4 @@ describe('CharterCompiler class', () => {
     });
   });
 });
+

@@ -14,8 +14,8 @@ import {
   BasicTracerProvider,
 } from '@opentelemetry/sdk-trace-base';
 import { trace } from '@opentelemetry/api';
-import { SquadObserver, classifyFile } from '@bradygaster/squad-sdk/runtime/squad-observer';
-import { EventBus } from '@bradygaster/squad-sdk/runtime/event-bus';
+import { SquadObserver, classifyFile } from '@jerrettdavis/squad-sdk/runtime/squad-observer';
+import { EventBus } from '@jerrettdavis/squad-sdk/runtime/event-bus';
 
 // ---------------------------------------------------------------------------
 // Test OTel infrastructure
@@ -202,3 +202,4 @@ describe('SquadObserver', () => {
     expect(observer.isRunning).toBe(false);
   });
 });
+

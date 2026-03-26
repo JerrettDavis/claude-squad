@@ -14,10 +14,10 @@ import { randomUUID } from 'node:crypto';
 import {
   parseTeamMarkdown,
   parseDecisionsMarkdown,
-} from '@bradygaster/squad-sdk/config';
-import { parseRoutingMarkdown } from '@bradygaster/squad-sdk/config';
-import { parseCharterMarkdown } from '@bradygaster/squad-sdk/agents';
-import { loadSkillsFromDirectory } from '@bradygaster/squad-sdk/skills';
+} from '@jerrettdavis/squad-sdk/config';
+import { parseRoutingMarkdown } from '@jerrettdavis/squad-sdk/config';
+import { parseCharterMarkdown } from '@jerrettdavis/squad-sdk/agents';
+import { loadSkillsFromDirectory } from '@jerrettdavis/squad-sdk/skills';
 
 // ---------------------------------------------------------------------------
 // Helper: convert all \n to \r\n so we can replay happy-path inputs as CRLF
@@ -312,3 +312,4 @@ Coordinate with Verbal on prompt changes.
     });
   });
 });
+

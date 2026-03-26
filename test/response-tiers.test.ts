@@ -9,8 +9,8 @@ import {
   type ResponseTier,
   type TierName,
   type TierContext,
-} from '@bradygaster/squad-sdk/coordinator';
-import { DEFAULT_CONFIG, defineConfig, type SquadConfig } from '@bradygaster/squad-sdk/config';
+} from '@jerrettdavis/squad-sdk/coordinator';
+import { DEFAULT_CONFIG, defineConfig, type SquadConfig } from '@jerrettdavis/squad-sdk/config';
 
 // --- getTier ---
 
@@ -184,3 +184,4 @@ describe('selectResponseTier', () => {
     });
   });
 });
+

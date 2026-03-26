@@ -10,7 +10,7 @@ import {
   getModelInfo,
   getFallbackChain,
   isModelAvailable
-} from '@bradygaster/squad-sdk/config';
+} from '@jerrettdavis/squad-sdk/config';
 
 describe('MODEL_CATALOG', () => {
   it('contains all model tiers', () => {
@@ -279,3 +279,4 @@ describe('convenience functions', () => {
     expect(isModelAvailable('nonexistent-model')).toBe(false);
   });
 });
+

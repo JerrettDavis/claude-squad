@@ -10,7 +10,7 @@ import { describe, it, expect } from 'vitest';
 import {
   parseTeamMarkdown,
   parseDecisionsMarkdown,
-} from '@bradygaster/squad-sdk/config';
+} from '@jerrettdavis/squad-sdk/config';
 
 // ===========================================================================
 // ParsedDecision extensions (#222) — 8 tests
@@ -205,3 +205,4 @@ describe('ParsedAgent: autoAssign field', () => {
     expect(agents[0]!.autoAssign).toBeUndefined();
   });
 });
+

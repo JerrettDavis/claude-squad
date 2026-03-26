@@ -9,8 +9,8 @@ import {
   TelemetryCollector,
   shouldNotifyUpdate,
   setTelemetryTransport,
-} from '@bradygaster/squad-sdk/runtime/telemetry';
-import type { TelemetryEvent, TelemetryConfig } from '@bradygaster/squad-sdk/runtime/telemetry';
+} from '@jerrettdavis/squad-sdk/runtime/telemetry';
+import type { TelemetryEvent, TelemetryConfig } from '@jerrettdavis/squad-sdk/runtime/telemetry';
 
 // ============================================================================
 // TelemetryCollector — consent
@@ -196,3 +196,4 @@ describe('shouldNotifyUpdate', () => {
     expect(shouldNotifyUpdate(lastCheck, 1000)).toBe(false);
   });
 });
+

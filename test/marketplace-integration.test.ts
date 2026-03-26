@@ -9,8 +9,8 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { randomUUID } from 'node:crypto';
-import type { SquadConfig, AgentConfig } from '@bradygaster/squad-sdk/config';
-import { defineConfig, validateConfig } from '@bradygaster/squad-sdk/config';
+import type { SquadConfig, AgentConfig } from '@jerrettdavis/squad-sdk/config';
+import { defineConfig, validateConfig } from '@jerrettdavis/squad-sdk/config';
 import {
   ManifestCategory,
   validateManifest,
@@ -23,7 +23,7 @@ import {
   validatePackageContents,
   type MarketplaceManifest,
   type ExtensionEvent,
-} from '@bradygaster/squad-sdk/marketplace';
+} from '@jerrettdavis/squad-sdk/marketplace';
 import {
   LocalAgentSource,
   GitHubAgentSource,
@@ -33,8 +33,8 @@ import {
   type AgentManifest,
   type AgentDefinition,
   type GitHubFetcher,
-} from '@bradygaster/squad-sdk/config';
-import { SkillRegistry, type SkillDefinition } from '@bradygaster/squad-sdk/skills';
+} from '@jerrettdavis/squad-sdk/config';
+import { SkillRegistry, type SkillDefinition } from '@jerrettdavis/squad-sdk/skills';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -853,3 +853,4 @@ describe('Full Distribution Pipeline', () => {
     expect(result.success).toBe(true);
   });
 });
+

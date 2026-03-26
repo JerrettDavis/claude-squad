@@ -16,8 +16,8 @@ import {
   Coordinator,
   type CoordinatorConfig,
   type RoutingDecision,
-} from '@bradygaster/squad-sdk/coordinator';
-import { EventBus } from '@bradygaster/squad-sdk/runtime/event-bus';
+} from '@jerrettdavis/squad-sdk/coordinator';
+import { EventBus } from '@jerrettdavis/squad-sdk/runtime/event-bus';
 
 // --- Helpers ---
 
@@ -263,3 +263,4 @@ describe('Coordinator', () => {
     });
   });
 });
+

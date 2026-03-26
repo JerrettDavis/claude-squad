@@ -4,7 +4,7 @@ import {
   migration_0_5_to_0_6,
   getRegisteredMigrations,
   createDefaultRegistry,
-} from '@bradygaster/squad-sdk/config/migrations';
+} from '@jerrettdavis/squad-sdk/config/migrations';
 
 // ============================================================================
 // getRegisteredMigrations
@@ -264,3 +264,4 @@ describe('migration 0.5.0 → 0.6.0', () => {
     expect(models.default).toBe('claude-sonnet-4');
   });
 });
+

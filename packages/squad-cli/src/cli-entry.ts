@@ -116,6 +116,18 @@ async function main(): Promise<void> {
     // Remove --team-root and its value from args
     args.splice(teamRootIdx, 2);
   }
+
+  // --orchestrator + --agenthub-url flags for self-hosted AgentHub routing
+  const orchestratorIdx = args.indexOf('--orchestrator');
+  if (orchestratorIdx !== -1 && args[orchestratorIdx + 1]) {
+    process.env['SQUAD_ORCHESTRATOR'] = args[orchestratorIdx + 1]!;
+    args.splice(orchestratorIdx, 2);
+  }
+  const agenthubUrlIdx = args.indexOf('--agenthub-url');
+  if (agenthubUrlIdx !== -1 && args[agenthubUrlIdx + 1]) {
+    process.env['SQUAD_AGENTHUB_URL'] = args[agenthubUrlIdx + 1]!;
+    args.splice(agenthubUrlIdx, 2);
+  }
   
   const hasGlobal = args.includes('--global');
   // --economy activates economy mode for this session (sets env var for spawner)
@@ -222,6 +234,8 @@ async function main(): Promise<void> {
     console.log(`                    upstream sync [name]`);
     console.log(`  ${BOLD}economy${RESET}    Toggle economy mode (cost-conscious model selection)`);
     console.log(`             Usage: economy [on|off]`);
+    console.log(`  ${BOLD}orchestrate${RESET} Submit work to self-hosted orchestrator (AgentHub)`);
+    console.log(`             Usage: orchestrate --prompt "..." [--url <agenthub-url>] [--wait]`);
 
     console.log(`  ${BOLD}version${RESET}    Print installed version`);
     console.log(`  ${BOLD}help${RESET}       Show this help message`);
@@ -231,6 +245,8 @@ async function main(): Promise<void> {
     console.log(`  ${BOLD}--global${RESET}       Use personal (global) squad path (for init, upgrade)`);
     console.log(`  ${BOLD}--economy${RESET}      Activate economy mode for this session (cheaper models)`);
     console.log(`  ${BOLD}--team-root${RESET}    Override team root path for resolution`);
+    console.log(`  ${BOLD}--orchestrator${RESET} Route execution backend (e.g., agenthub)`);
+    console.log(`  ${BOLD}--agenthub-url${RESET} AgentHub base URL (e.g., http://localhost:8787)`);
     console.log(`\nInstallation:`);
     console.log(`  npm install --save-dev @jerrettdavis/squad-cli`);
     console.log(`\nInsider channel:`);
@@ -624,6 +640,12 @@ async function main(): Promise<void> {
   if (cmd === 'economy') {
     const { runEconomy } = await import('./cli/commands/economy.js');
     await runEconomy(process.cwd(), args.slice(1));
+    return;
+  }
+
+  if (cmd === 'orchestrate') {
+    const { runOrchestrate } = await import('./cli/commands/orchestrate.js');
+    await runOrchestrate(args.slice(1));
     return;
   }
 

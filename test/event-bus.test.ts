@@ -6,8 +6,8 @@
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { EventBus as ClientEventBus } from '@bradygaster/squad-sdk/client';
-import { EventBus as RuntimeEventBus } from '@bradygaster/squad-sdk/runtime/event-bus';
+import { EventBus as ClientEventBus } from '@jerrettdavis/squad-sdk/client';
+import { EventBus as RuntimeEventBus } from '@jerrettdavis/squad-sdk/runtime/event-bus';
 
 describe('ClientEventBus', () => {
   let bus: ClientEventBus;
@@ -479,3 +479,4 @@ describe('RuntimeEventBus', () => {
     expect(bus.getHandlerCount('session:created')).toBe(0);
   });
 });
+

@@ -16,7 +16,7 @@ import {
   compareSemVer,
   type Migration,
   type MigrationResult,
-} from '@bradygaster/squad-sdk/config';
+} from '@jerrettdavis/squad-sdk/config';
 import {
   migrateMarkdownToConfig,
   parseTeamMarkdown,
@@ -24,18 +24,18 @@ import {
   generateConfigFromParsed,
   type MarkdownParseResult,
   type MarkdownMigrationOptions,
-} from '@bradygaster/squad-sdk/config';
+} from '@jerrettdavis/squad-sdk/config';
 import {
   exportSquadConfig,
   serializeBundle,
   type ExportBundle,
-} from '@bradygaster/squad-sdk/sharing';
+} from '@jerrettdavis/squad-sdk/sharing';
 import {
   importSquadConfig,
   deserializeBundle,
   validateBundle,
-} from '@bradygaster/squad-sdk/sharing';
-import { DEFAULT_CONFIG, type SquadConfig } from '@bradygaster/squad-sdk/runtime';
+} from '@jerrettdavis/squad-sdk/sharing';
+import { DEFAULT_CONFIG, type SquadConfig } from '@jerrettdavis/squad-sdk/runtime';
 
 // ============================================================================
 // Helpers
@@ -649,3 +649,4 @@ describe('edge cases', () => {
     ).toThrow('Invalid version format');
   });
 });
+

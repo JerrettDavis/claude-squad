@@ -15,10 +15,10 @@ import {
   type AgentSpawnConfig,
   type SpawnResult,
   type FanOutDependencies,
-} from '@bradygaster/squad-sdk/coordinator';
-import { EventBus } from '@bradygaster/squad-sdk/client';
-import { SessionPool } from '@bradygaster/squad-sdk/client';
-import type { AgentCharter } from '@bradygaster/squad-sdk/agents';
+} from '@jerrettdavis/squad-sdk/coordinator';
+import { EventBus } from '@jerrettdavis/squad-sdk/client';
+import { SessionPool } from '@jerrettdavis/squad-sdk/client';
+import type { AgentCharter } from '@jerrettdavis/squad-sdk/agents';
 
 describe('spawnParallel', () => {
   let mockDeps: FanOutDependencies;
@@ -312,3 +312,4 @@ describe('aggregateSessionEvents', () => {
     }).not.toThrow();
   });
 });
+

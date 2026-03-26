@@ -12,7 +12,7 @@ import {
   clearVersionStore,
   type VersionPin,
   type AgentVersionResolver,
-} from '@bradygaster/squad-sdk/sharing';
+} from '@jerrettdavis/squad-sdk/sharing';
 import {
   configureAgentRepo,
   listRepoAgents,
@@ -20,14 +20,14 @@ import {
   pushAgent,
   type AgentRepoConfig,
   type AgentRepoOperations,
-} from '@bradygaster/squad-sdk/sharing';
+} from '@jerrettdavis/squad-sdk/sharing';
 import {
   AgentCache,
   DEFAULT_AGENT_TTL,
   DEFAULT_SKILL_TTL,
   type CacheEntry,
   type CacheStats,
-} from '@bradygaster/squad-sdk/sharing';
+} from '@jerrettdavis/squad-sdk/sharing';
 import {
   detectConflicts,
   resolveConflicts,
@@ -35,9 +35,9 @@ import {
   type IncomingBundle,
   type Conflict,
   type ConflictStrategy,
-} from '@bradygaster/squad-sdk/sharing';
-import type { AgentDefinition } from '@bradygaster/squad-sdk/config';
-import type { SquadConfig } from '@bradygaster/squad-sdk/config';
+} from '@jerrettdavis/squad-sdk/sharing';
+import type { AgentDefinition } from '@jerrettdavis/squad-sdk/config';
+import type { SquadConfig } from '@jerrettdavis/squad-sdk/config';
 
 // ===== Helpers =====
 
@@ -628,3 +628,4 @@ describe('Conflict Resolution (M5-9)', () => {
     });
   });
 });
+

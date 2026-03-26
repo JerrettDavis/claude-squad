@@ -13,7 +13,7 @@ import {
   rateLimitGuidance,
   extractRetryAfter,
   formatGuidance,
-} from '@bradygaster/squad-cli/shell/error-messages';
+} from '@jerrettdavis/squad-cli/shell/error-messages';
 
 describe('error-messages', () => {
   // ---------- sdkDisconnectGuidance ----------
@@ -168,3 +168,4 @@ describe('error-messages', () => {
     });
   });
 });
+

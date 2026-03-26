@@ -9,9 +9,9 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { pathToFileURL } from 'node:url';
-import { SkillScriptLoader, resolveSkillPath } from '@bradygaster/squad-sdk/skills';
-import type { LoadResult } from '@bradygaster/squad-sdk/skills';
-import { ToolRegistry } from '@bradygaster/squad-sdk/tools';
+import { SkillScriptLoader, resolveSkillPath } from '@jerrettdavis/squad-sdk/skills';
+import type { LoadResult } from '@jerrettdavis/squad-sdk/skills';
+import { ToolRegistry } from '@jerrettdavis/squad-sdk/tools';
 
 // --- Test fixtures and helpers ---
 
@@ -627,4 +627,5 @@ describe('resolveSkillPath()', () => {
     expect(result).toBe(path.resolve(projectRoot, 'skills', 'my-skill'));
   });
 });
+
 

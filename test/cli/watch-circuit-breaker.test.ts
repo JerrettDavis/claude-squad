@@ -16,7 +16,7 @@ import { describe, it, expect } from 'vitest';
 import {
   PredictiveCircuitBreaker,
   getTrafficLight,
-} from '@bradygaster/squad-sdk/ralph/rate-limiting';
+} from '@jerrettdavis/squad-sdk/ralph/rate-limiting';
 
 // Re-declare the state shape to test serialization contract
 interface CircuitBreakerState {
@@ -318,3 +318,4 @@ describe('Watch: gh-cli rate limit helpers', () => {
     expect(isRateLimitError(null)).toBe(false);
   });
 });
+

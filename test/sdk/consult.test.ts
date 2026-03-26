@@ -17,7 +17,7 @@ import {
   type LicenseInfo,
   type ExtractionResult,
   type StagedLearning,
-} from '@bradygaster/squad-sdk';
+} from '@jerrettdavis/squad-sdk';
 
 const TEST_ROOT = join(
   process.cwd(),
@@ -391,7 +391,7 @@ import {
   extractLearnings,
   loadSessionHistory,
   getPersonalSquadRoot,
-} from '@bradygaster/squad-sdk';
+} from '@jerrettdavis/squad-sdk';
 
 describe('setupConsultMode', () => {
   const SETUP_ROOT = join(
@@ -765,3 +765,4 @@ describe('loadSessionHistory', () => {
     expect(history.entries[0].content).toBe('Valid');
   });
 });
+

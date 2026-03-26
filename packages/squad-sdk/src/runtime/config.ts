@@ -303,6 +303,15 @@ export interface SquadConfig {
   
   /** Platform-specific overrides */
   platforms?: PlatformOverrides;
+
+  /** Self-hosted orchestration backend (AgentHub) */
+  agenthub?: {
+    enabled?: boolean;
+    url?: string;
+    defaultPipe?: 'agenthub' | string;
+    authTokenEnv?: string;
+    [key: string]: unknown;
+  };
   
   /** Custom extensions */
   [key: string]: unknown;
@@ -373,6 +382,12 @@ export const DEFAULT_CONFIG: SquadConfig = {
       disableModelSelection: false,
       scribeMode: 'sync'
     }
+  },
+  agenthub: {
+    enabled: false,
+    url: 'http://localhost:8787',
+    defaultPipe: 'agenthub',
+    authTokenEnv: 'AGENTHUB_TOKEN'
   }
 };
 
@@ -774,6 +789,10 @@ export function validateConfig(config: unknown): SquadConfig {
     platforms: {
       ...DEFAULT_CONFIG.platforms,
       ...cfg.platforms
+    },
+    agenthub: {
+      ...DEFAULT_CONFIG.agenthub,
+      ...cfg.agenthub
     }
   };
   

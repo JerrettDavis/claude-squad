@@ -19,7 +19,7 @@ import {
   RC_PROTOCOL_VERSION,
   serializeEvent,
   parseCommand,
-} from '@bradygaster/squad-sdk';
+} from '@jerrettdavis/squad-sdk';
 
 describe('Protocol', () => {
   it('serializes events to JSON', () => {
@@ -1321,3 +1321,4 @@ describe('Replay Buffer', () => {
     ws.close();
   });
 });
+

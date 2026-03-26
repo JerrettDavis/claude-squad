@@ -17,7 +17,7 @@ import {
   readHistory,
   deleteHistoryShadow,
   shadowExists,
-} from '@bradygaster/squad-sdk/agents';
+} from '@jerrettdavis/squad-sdk/agents';
 
 let tmpDir: string;
 
@@ -206,3 +206,4 @@ describe('history-shadow (#479 race condition fix)', () => {
     });
   });
 });
+

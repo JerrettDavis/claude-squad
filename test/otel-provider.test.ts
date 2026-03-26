@@ -20,7 +20,7 @@ import {
   getTracer,
   getMeter,
   shutdownOTel,
-} from '@bradygaster/squad-sdk/runtime/otel';
+} from '@jerrettdavis/squad-sdk/runtime/otel';
 
 // ---------------------------------------------------------------------------
 // Helpers: save/restore env
@@ -253,3 +253,4 @@ describe('OTel Provider — config priority', () => {
     }),
   );
 });
+

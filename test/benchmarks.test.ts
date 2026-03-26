@@ -10,7 +10,7 @@ import {
   type BenchmarkResult,
   type BenchmarkReport,
   type TimingResult,
-} from '@bradygaster/squad-sdk/runtime/benchmarks';
+} from '@jerrettdavis/squad-sdk/runtime/benchmarks';
 
 // ============================================================================
 // percentile helper
@@ -237,3 +237,4 @@ describe('formatBenchmarkReport', () => {
     expect(output).toContain('─');
   });
 });
+

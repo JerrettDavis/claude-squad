@@ -127,6 +127,7 @@ Not every feature works everywhere. Here's what's available where:
 | Aspire dashboard | Yes | Yes | Yes | Yes | Yes |
 | `squad doctor` diagnostics | Yes | Yes | Yes | Yes | Yes |
 | Issue assignment to coding agents | Yes (`@copilot`) | Yes (`@claude`) | Yes | Yes (setup) | Yes |
+
 **Legend:**
 - Yes = fully supported
 - Limited = constrained behavior

@@ -8,8 +8,8 @@ import {
   compileRoutingRules,
   matchRoute,
   matchIssueLabels
-} from '@bradygaster/squad-sdk/config';
-import type { RoutingConfig, IssueRoutingRule } from '@bradygaster/squad-sdk/runtime';
+} from '@jerrettdavis/squad-sdk/config';
+import type { RoutingConfig, IssueRoutingRule } from '@jerrettdavis/squad-sdk/runtime';
 
 describe('parseRoutingMarkdown', () => {
   it('parses basic routing table', () => {
@@ -291,3 +291,4 @@ describe('matchIssueLabels', () => {
     expect(match).toBeUndefined();
   });
 });
+

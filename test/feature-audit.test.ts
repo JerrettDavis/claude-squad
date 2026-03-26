@@ -9,8 +9,8 @@ import {
   generateAuditMarkdown,
   type FeatureAuditReport,
   type FeatureStatus,
-} from '@bradygaster/squad-sdk/config';
-import { DEFAULT_CONFIG, defineConfig, type SquadConfig } from '@bradygaster/squad-sdk/config';
+} from '@jerrettdavis/squad-sdk/config';
+import { DEFAULT_CONFIG, defineConfig, type SquadConfig } from '@jerrettdavis/squad-sdk/config';
 
 // --- helpers ---
 
@@ -197,3 +197,4 @@ describe('generateAuditMarkdown', () => {
     expect(md).toContain('0.6.0');
   });
 });
+

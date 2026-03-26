@@ -7,12 +7,12 @@ import {
   CastingHistory,
   type CastingRecord,
   type SerializedCastingHistory,
-} from '@bradygaster/squad-sdk/casting';
+} from '@jerrettdavis/squad-sdk/casting';
 import {
   CastingEngine,
   type CastMember,
   type CastingConfig,
-} from '@bradygaster/squad-sdk/casting';
+} from '@jerrettdavis/squad-sdk/casting';
 
 // --- helpers ---
 
@@ -253,3 +253,4 @@ describe('CastingHistory', () => {
     });
   });
 });
+

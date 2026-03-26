@@ -7,13 +7,13 @@
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 
-import { initSquadTelemetry } from '@bradygaster/squad-sdk/runtime/otel-init';
-import type { SquadTelemetryHandle } from '@bradygaster/squad-sdk/runtime/otel-init';
-import { EventBus } from '@bradygaster/squad-sdk/runtime/event-bus';
-import { CostTracker } from '@bradygaster/squad-sdk/runtime/cost-tracker';
-import { estimateCost } from '@bradygaster/squad-sdk/config/models';
-import { MODEL_CATALOG } from '@bradygaster/squad-sdk/config/models';
-import type { ModelPricing } from '@bradygaster/squad-sdk/config/models';
+import { initSquadTelemetry } from '@jerrettdavis/squad-sdk/runtime/otel-init';
+import type { SquadTelemetryHandle } from '@jerrettdavis/squad-sdk/runtime/otel-init';
+import { EventBus } from '@jerrettdavis/squad-sdk/runtime/event-bus';
+import { CostTracker } from '@jerrettdavis/squad-sdk/runtime/cost-tracker';
+import { estimateCost } from '@jerrettdavis/squad-sdk/config/models';
+import { MODEL_CATALOG } from '@jerrettdavis/squad-sdk/config/models';
+import type { ModelPricing } from '@jerrettdavis/squad-sdk/config/models';
 
 // ============================================================================
 // initSquadTelemetry — auto-wiring
@@ -248,3 +248,4 @@ describe('CostTracker EventBus wiring (standalone)', () => {
     expect(tracker.getSummary().totalInputTokens).toBe(100); // unchanged
   });
 });
+

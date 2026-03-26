@@ -14,10 +14,10 @@ import { randomUUID } from 'node:crypto';
 import {
   parseTeamMarkdown,
   parseDecisionsMarkdown,
-} from '@bradygaster/squad-sdk/config';
-import { parseRoutingMarkdown } from '@bradygaster/squad-sdk/config';
-import { parseCharterMarkdown } from '@bradygaster/squad-sdk/agents';
-import { loadSkillsFromDirectory } from '@bradygaster/squad-sdk/skills';
+} from '@jerrettdavis/squad-sdk/config';
+import { parseRoutingMarkdown } from '@jerrettdavis/squad-sdk/config';
+import { parseCharterMarkdown } from '@jerrettdavis/squad-sdk/agents';
+import { loadSkillsFromDirectory } from '@jerrettdavis/squad-sdk/skills';
 
 // ===========================================================================
 // Return shape tests (5)
@@ -374,3 +374,4 @@ Coordinate with Fenster on implementation, Hockney on test plans.
     expect(result).toMatchSnapshot();
   });
 });
+
