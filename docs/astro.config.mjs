@@ -8,8 +8,8 @@ import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 
 export default defineConfig({
-  site: 'https://bradygaster.github.io',
-  base: '/squad/',
+  site: 'https://jerrettdavis.github.io',
+  base: '/claude-squad/',
   integrations: [sitemap()],
   vite: {
     plugins: [tailwindcss()],
