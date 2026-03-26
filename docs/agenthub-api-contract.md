@@ -14,6 +14,16 @@ Goal: keep endpoints as close to GitHub REST as practical while adding optional 
 - `GET /api/prs`
 - `GET /api/agents`
 - `GET /api/events`
+- `GET /api/events/stream` (SSE)
+
+## Live GitHub mode (optional)
+
+Enable live GitHub data for issues/PRs with:
+
+- `SQUAD_API_LIVE_GH=1`
+- optional repo override:
+  - `SQUAD_REPO_OWNER`
+  - `SQUAD_REPO_NAME`
 
 ## Response policy
 
