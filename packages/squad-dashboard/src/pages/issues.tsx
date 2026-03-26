@@ -1,9 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { IssueRow } from '@/components/issue-row'
-import { issues } from '@/data/mock'
+import { useIssues } from '@/api/hooks'
+import { toIssue } from '@/api/adapters'
 
 export function IssuesPage() {
+  const { data } = useIssues()
+  const issues = (data || []).map(toIssue)
   const openIssues = issues.filter((i) => i.state === 'open')
   const closedIssues = issues.filter((i) => i.state === 'closed')
 

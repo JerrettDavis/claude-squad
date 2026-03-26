@@ -1,7 +1,11 @@
 import { AgentCard } from '@/components/agent-card'
-import { agents } from '@/data/mock'
+import { useAgents } from '@/api/hooks'
+import { toAgent } from '@/api/adapters'
 
 export function AgentsPage() {
+  const { data } = useAgents()
+  const agents = (data || []).map(toAgent)
+
   return (
     <div className="space-y-6">
       <div>

@@ -1,8 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ActivityItem } from '@/components/activity-item'
-import { activityFeed } from '@/data/mock'
+import { useEvents } from '@/api/hooks'
+import { toActivityEvent } from '@/api/adapters'
 
 export function ActivityPage() {
+  const { data } = useEvents()
+  const activityFeed = (data || []).map(toActivityEvent)
+
   return (
     <div className="space-y-6">
       <div>

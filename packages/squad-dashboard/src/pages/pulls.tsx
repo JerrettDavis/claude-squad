@@ -1,8 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { PrRow } from '@/components/pr-row'
-import { pullRequests } from '@/data/mock'
+import { usePullRequests } from '@/api/hooks'
+import { toPullRequest } from '@/api/adapters'
 
 export function PullsPage() {
+  const { data } = usePullRequests()
+  const pullRequests = (data || []).map(toPullRequest)
+
   return (
     <div className="space-y-6">
       <div>

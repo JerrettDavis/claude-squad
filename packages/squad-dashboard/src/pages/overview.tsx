@@ -1,13 +1,18 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { AgentCard } from '@/components/agent-card'
 import { IssueRow } from '@/components/issue-row'
-import { PrRow } from '@/components/pr-row'
 import { ActivityItem } from '@/components/activity-item'
-import { agents, issues, pullRequests, activityFeed } from '@/data/mock'
+import { useAgents, useIssues, usePullRequests, useEvents } from '@/api/hooks'
+import { toAgent, toIssue, toPullRequest, toActivityEvent } from '@/api/adapters'
 import { Bot, CircleDot, GitPullRequest, Activity } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 export function OverviewPage() {
+  const agents = (useAgents().data || []).map(toAgent)
+  const issues = (useIssues().data || []).map(toIssue)
+  const pullRequests = (usePullRequests().data || []).map(toPullRequest)
+  const activityFeed = (useEvents().data || []).map(toActivityEvent)
+
   const activeAgents = agents.filter((a) => a.status === 'active').length
   const openIssues = issues.filter((i) => i.state === 'open').length
   const openPrs = pullRequests.filter((p) => p.state === 'open' || p.state === 'draft').length

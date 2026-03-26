@@ -1,9 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
 import { useHealth } from '@/api/hooks'
 import { USE_MOCKS, BASE_URL } from '@/api/client'
 import { useTheme, COLOR_SCHEMES, type ColorScheme } from '@/hooks/use-theme'
@@ -11,7 +10,7 @@ import { Settings, Server, Palette, Monitor, Sun, Moon, CheckCircle, XCircle, In
 
 export function SettingsPage() {
   const health = useHealth()
-  const { theme, setTheme, colorScheme, setColorScheme, resolved } = useTheme()
+  const { theme, setTheme, colorScheme, setColorScheme } = useTheme()
   const [apiUrl, setApiUrl] = useState(BASE_URL)
 
   const apiConnected = health.data?.ok === true
