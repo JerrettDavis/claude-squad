@@ -46,7 +46,6 @@ jobs:
           path: docs/dist
 
   deploy:
-    if: ${{ vars.ENABLE_PAGES_DEPLOY == 'true' }}
     needs: build
     runs-on: ubuntu-latest
     environment:
