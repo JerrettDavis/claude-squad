@@ -25,7 +25,11 @@
 
 | Name | Role | Charter | Status |
 |------|------|---------|--------|
+<<<<<<< HEAD
 | {{CODING_AGENT_HANDLE}} | Coding Agent | — | 🤖 Coding Agent |
+=======
+| @copilot | Coding Agent | — | 🤖 Coding Agent |
+>>>>>>> upstream/dev
 
 ### Capabilities
 
@@ -38,7 +42,11 @@
 - Boilerplate/scaffolding generation
 - Documentation fixes and README updates
 
+<<<<<<< HEAD
 **🟡 Needs review — route to {{CODING_AGENT_HANDLE}} but flag for squad member PR review:**
+=======
+**🟡 Needs review — route to @copilot but flag for squad member PR review:**
+>>>>>>> upstream/dev
 - Medium features with clear specs and acceptance criteria
 - Refactoring with existing test coverage
 - API endpoint additions following established patterns
